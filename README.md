@@ -5,7 +5,8 @@ internet, aucune bibliothèque externe) pour préparer et imprimer des **جذا�
 préparation de cours** de SVT.
 
 Application conçue par **Pr. Omari Mohammed**, professeur de Sciences de la Vie et de la Terre,
-et développée avec Claude (Anthropic). Elle est utilisable telle quelle par n'importe quel
+et développée avec Claude (Anthropic). Son monogramme sert de logo dans l'en-tête et d'icône
+d'onglet (tracé vectoriel intégré, sans fichier externe). Elle est utilisable telle quelle par n'importe quel
 professeur : l'en-tête est vierge au départ et se renseigne en quelques clics.
 
 ## Utilisation
@@ -60,6 +61,9 @@ modalités d'évaluation et amorces de situations de départ.
 
 ## Fonctionnalités
 
+- **Thème clair / sombre** : le bouton 🌓 de la barre supérieure alterne entre le thème du
+  système, le thème clair et le thème sombre ; le choix est mémorisé. La fiche imprimée reste
+  toujours sur fond blanc, quel que soit le thème.
 - **Bilingue arabe / français** : bascule de l'interface avec passage RTL ↔ LTR automatique.
   La langue du document peut suivre l'interface ou être fixée fiche par fiche.
 - **En-tête officiel modifiable** : ministère, Académie Régionale, Direction Provinciale,
