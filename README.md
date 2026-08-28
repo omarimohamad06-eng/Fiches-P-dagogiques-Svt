@@ -30,7 +30,8 @@ professeur : l'en-tête est vierge au départ et se renseigne en quelques clics.
 ## Assistant « programme officiel »
 
 Le programme national de SVT (sections internationales, option français — MEN, avril 2015) est
-**intégré dans l'application** : **18 unités, 72 leçons et 213 contenus** pour les 5 niveaux.
+**intégré dans l'application**, en français et en arabe : **18 unités, 72 leçons et 213 contenus**
+pour les 5 niveaux.
 
 1. Choisir le **niveau** → la liste des unités du programme se met à jour.
 2. Choisir l'**unité** puis la **leçon** (avec son enveloppe horaire officielle).
@@ -46,8 +47,9 @@ Trois modèles d'étapes sont proposés :
 | Une étape par contenu du programme | Une ligne du tableau par contenu officiel de la leçon |
 | Une étape par leçon de l'unité | Fiche de planification de toute l'unité, une ligne par leçon avec son horaire |
 
-Les titres des unités et des leçons ainsi que les prérequis sont **bilingues (français / arabe)** ;
-les contenus détaillés reprennent la version française du document officiel.
+Tout le programme est **bilingue (français / arabe)** : titres des unités, titres des leçons,
+prérequis et **les 213 contenus détaillés**. Le remplissage suit la langue du document, ce qui
+permet de préparer une jadhadha entièrement en arabe comme entièrement en français.
 
 ## Banques de formulations
 
