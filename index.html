@@ -101,6 +101,13 @@ legend{font-size:12px;font-weight:700;color:var(--brand-d);padding:0 6px;text-tr
 .g3{grid-template-columns:1fr 1fr 1fr}
 @media (max-width:1500px){ .g3{grid-template-columns:1fr 1fr} }
 label.field{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--muted);font-weight:600}
+label.field{position:relative}
+label.hasbk > span{padding-inline-end:32px}
+label.field > .bk{position:absolute;inset-inline-end:0;top:-3px;padding:1px 7px;font-size:11px;line-height:1.6}
+#mdBankList{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+#mdBankList label{display:flex;gap:8px;align-items:flex-start;padding:5px 7px;border-radius:6px;cursor:pointer;font-size:13px}
+#mdBankList label:hover{background:var(--brand-l)}
+#mdBankList input{margin-top:3px;accent-color:var(--brand)}
 label.field > input, label.field > select, label.field > textarea{
   border:1px solid var(--line);border-radius:7px;padding:7px 9px;background:#fff;color:var(--ink);
   font-size:13.5px;font-weight:400;width:100%;transition:.13s
@@ -321,6 +328,35 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
         <div class="hint" data-i18n="logoHint">Le logo est enregistré localement (redimensionné automatiquement).</div>
       </fieldset>
 
+      <fieldset id="fsProg">
+        <legend data-i18n="secProg">Assistant « programme officiel »</legend>
+        <div class="grid g2">
+          <label class="field"><span data-i18n="pUnite">Unité du programme</span>
+            <select id="progUnite"></select></label>
+          <label class="field"><span data-i18n="pLecon">Leçon / Chapitre</span>
+            <select id="progLecon"></select></label>
+        </div>
+        <div class="grid g2" style="margin-top:9px">
+          <label class="field"><span data-i18n="pSteps">Étapes à générer</span>
+            <select id="progSteps">
+              <option value="std" data-i18n="pStepsStd">Squelette standard (4 phases)</option>
+              <option value="content" data-i18n="pStepsContent">Une étape par contenu du programme</option>
+              <option value="lesson" data-i18n="pStepsLesson">Une étape par leçon de l'unité</option>
+              <option value="keep" data-i18n="pStepsKeep">Ne pas modifier les étapes</option>
+            </select></label>
+          <div style="display:flex;flex-direction:column;gap:3px;justify-content:center">
+            <label class="checkline"><input type="checkbox" id="pFillMeta" checked><span data-i18n="pFillMeta">Unité, titre et durée</span></label>
+            <label class="checkline"><input type="checkbox" id="pFillPre" checked><span data-i18n="pFillPre">Prérequis</span></label>
+            <label class="checkline"><input type="checkbox" id="pFillObj" checked><span data-i18n="pFillObj">Objectifs (contenus du programme)</span></label>
+          </div>
+        </div>
+        <div class="rowbtns" style="margin-top:9px">
+          <button class="btn sm primary" id="btnProgFill">⤓ <span data-i18n="pFill">Remplir la fiche</span></button>
+          <span class="hint" id="progInfo"></span>
+        </div>
+        <div class="hint" data-i18n="pNote">Programme officiel de SVT.</div>
+      </fieldset>
+
       <fieldset>
         <legend data-i18n="secMeta">Identification de la fiche</legend>
         <div class="grid g3">
@@ -354,12 +390,12 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
       <fieldset>
         <legend data-i18n="secContent">Contenu pédagogique</legend>
         <label class="field"><span data-i18n="fComp">Compétences et objectifs visés</span>
-          <textarea data-f="competences" data-ph="listPh" placeholder="Une ligne par élément…"></textarea>
+          <textarea data-f="competences" data-bank="objectifs" data-ph="listPh" placeholder="Une ligne par élément…"></textarea>
           <span class="hint" data-i18n="listHint">Une ligne = une puce. Une ligne vide = un saut de paragraphe.</span></label>
         <label class="field" style="margin-top:9px"><span data-i18n="fPrereq">Prérequis (acquis antérieurs)</span>
-          <textarea data-f="prerequis" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
+          <textarea data-f="prerequis" data-bank="prerequis" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
         <label class="field" style="margin-top:9px"><span data-i18n="fSituation">Situation de départ / Situation-problème</span>
-          <textarea data-f="situation" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
+          <textarea data-f="situation" data-bank="situation" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
       </fieldset>
 
       <fieldset>
@@ -424,6 +460,17 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
   </div>
 </div>
 
+<div class="modal" id="mdBank">
+  <div class="box">
+    <h3 id="mdBankTitle">…</h3>
+    <div class="c"><div class="hint" data-i18n="bankHint">Cochez les éléments à ajouter au champ.</div><div id="mdBankList"></div></div>
+    <div class="f">
+      <button class="btn" data-close="mdBank" data-i18n="cancel">Annuler</button>
+      <button class="btn primary" id="mdBankOk" data-i18n="bankInsert">Insérer</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -451,6 +498,19 @@ var I18N = {
     fDirection:"Direction Provinciale", fEtab:"Établissement", chooseLogo:"Choisir un logo…",
     removeLogo:"Retirer le logo", fillDefaults:"Valeurs par défaut", saveDefaults:"Mémoriser comme défaut",
     logoHint:"Le logo est enregistré localement (redimensionné automatiquement).",
+    secProg:"Assistant « programme officiel »", pUnite:"Unité du programme", pLecon:"Leçon / Chapitre",
+    pAll:"— Toute l'unité —", pSteps:"Étapes à générer", pStepsKeep:"Ne pas modifier les étapes",
+    pStepsStd:"Squelette standard (4 phases)", pStepsContent:"Une étape par contenu du programme",
+    pStepsLesson:"Une étape par leçon de l'unité", pFillMeta:"Unité, titre et durée",
+    pFillPre:"Prérequis", pFillObj:"Objectifs (contenus du programme)", pFill:"Remplir la fiche",
+    pNote:"Programme officiel de SVT — sections internationales, option français (MEN, avril 2015). Les contenus détaillés sont en français ; les titres des unités et des leçons sont bilingues.",
+    pNoProg:"Aucun programme enregistré pour ce niveau.",
+    pOverwriteTitle:"Remplacer le contenu actuel ?", pOverwriteText:"Certains champs de cette fiche sont déjà remplis. Ils seront remplacés par les données du programme officiel.",
+    pDone:"Fiche remplie depuis le programme officiel",
+    bank:"Banque de formulations", bankInsert:"Insérer", bankHint:"Cochez les éléments à ajouter au champ.",
+    b_objectifs:"Objectifs", b_competences:"Compétences", b_prof:"Activité du professeur",
+    b_eleve:"Activité de l'élève", b_moyens:"Moyens et supports", b_evaluation:"Évaluation",
+    b_situation:"Situation de départ", b_prerequis:"Prérequis",
     secMeta:"Identification de la fiche", fNiveau:"Niveau", fNiveauCustom:"Niveau personnalisé",
     fMatiere:"Matière", fUnite:"Unité / Module", fDuree:"Durée", fNum:"Fiche N°", fProf:"Professeur",
     fAnnee:"Année scolaire", fDocLang:"Langue du document", langAuto:"Suivre l'interface",
@@ -470,6 +530,8 @@ var I18N = {
     importErr:"Fichier invalide.", quotaErr:"Espace de stockage saturé : allégez le logo ou supprimez des fiches.",
     noStep:"Aucune étape. Cliquez sur « ＋ Ajouter une étape ».",
     help:["Toutes les fiches sont enregistrées automatiquement dans ce navigateur (localStorage) : aucune connexion internet n'est nécessaire.",
+      "L'assistant « programme officiel » remplit l'unité, le titre, la durée, les prérequis, les objectifs et le tableau des étapes à partir du programme national de SVT : choisissez le niveau, l'unité puis la leçon.",
+      "Le bouton ＋ placé à côté d'un champ ouvre une banque de formulations prêtes à l'emploi (activités du professeur et de l'élève, moyens, évaluation, situations de départ…).",
       "Pour obtenir un PDF : bouton « Imprimer / PDF » puis, dans la fenêtre du navigateur, choisir « Enregistrer au format PDF », format A4, orientation Paysage, marges « Aucune » et cocher « Graphiques d'arrière-plan ».",
       "La pagination est calculée automatiquement : les étapes qui ne tiennent pas sont reportées sur la page suivante avec le titre des colonnes répété.",
       "L'option « Étirer les lignes » agrandit les lignes du tableau pour remplir la page et éviter les grands espaces vides.",
@@ -484,6 +546,19 @@ var I18N = {
     fDirection:"المديرية الإقليمية", fEtab:"المؤسسة", chooseLogo:"اختيار شعار…",
     removeLogo:"حذف الشعار", fillDefaults:"القيم الافتراضية", saveDefaults:"اعتمادها كقيم افتراضية",
     logoHint:"يُحفظ الشعار محليًا (مع تصغيره تلقائيًا).",
+    secProg:"مساعد «المقرر الرسمي»", pUnite:"وحدة المقرر", pLecon:"الدرس / المقطع",
+    pAll:"— الوحدة كاملة —", pSteps:"المراحل المراد توليدها", pStepsKeep:"عدم تغيير المراحل",
+    pStepsStd:"هيكل معياري (4 مراحل)", pStepsContent:"مرحلة لكل مضمون من المقرر",
+    pStepsLesson:"مرحلة لكل درس من الوحدة", pFillMeta:"الوحدة والعنوان والمدة",
+    pFillPre:"المكتسبات السابقة", pFillObj:"الأهداف (مضامين المقرر)", pFill:"ملء الجذاذة",
+    pNote:"المقرر الرسمي لعلوم الحياة والأرض — المسالك الدولية، خيار الفرنسية (وزارة التربية الوطنية، أبريل 2015). المضامين المفصلة بالفرنسية، أما عناوين الوحدات والدروس فثنائية اللغة.",
+    pNoProg:"لا يتوفر مقرر مسجل لهذا المستوى.",
+    pOverwriteTitle:"استبدال المحتوى الحالي؟", pOverwriteText:"بعض حقول هذه الجذاذة مملوءة مسبقًا وسيتم استبدالها بمعطيات المقرر الرسمي.",
+    pDone:"تم ملء الجذاذة انطلاقًا من المقرر الرسمي",
+    bank:"بنك الصيغ الجاهزة", bankInsert:"إدراج", bankHint:"اختر العناصر المراد إضافتها إلى الحقل.",
+    b_objectifs:"الأهداف", b_competences:"الكفايات", b_prof:"نشاط الأستاذ",
+    b_eleve:"نشاط المتعلم", b_moyens:"الوسائل والدعامات", b_evaluation:"التقويم",
+    b_situation:"وضعية الانطلاق", b_prerequis:"المكتسبات السابقة",
     secMeta:"تعريف الجذاذة", fNiveau:"المستوى", fNiveauCustom:"مستوى مخصص",
     fMatiere:"المادة", fUnite:"الوحدة / المجزوءة", fDuree:"المدة الزمنية", fNum:"رقم الجذاذة", fProf:"الأستاذ",
     fAnnee:"السنة الدراسية", fDocLang:"لغة الوثيقة", langAuto:"حسب لغة الواجهة",
@@ -503,6 +578,8 @@ var I18N = {
     importErr:"ملف غير صالح.", quotaErr:"مساحة التخزين ممتلئة: قلّص حجم الشعار أو احذف بعض الجذاذات.",
     noStep:"لا توجد مراحل. اضغط «＋ إضافة مرحلة».",
     help:["تُحفظ جميع الجذاذات تلقائيًا داخل هذا المتصفح (localStorage) دون الحاجة إلى أي اتصال بالإنترنت.",
+      "مساعد «المقرر الرسمي» يملأ الوحدة والعنوان والمدة والمكتسبات السابقة والأهداف وجدول المراحل انطلاقًا من المقرر الوطني لعلوم الحياة والأرض: اختر المستوى ثم الوحدة ثم الدرس.",
+      "زر ＋ بجانب كل حقل يفتح بنكًا من الصيغ الجاهزة (أنشطة الأستاذ والمتعلم، الوسائل، التقويم، وضعيات الانطلاق…).",
       "للحصول على ملف PDF: اضغط «طباعة / PDF» ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
       "يتم ترقيم الصفحات تلقائيًا: المراحل التي لا تسع في الصفحة تُنقل إلى الصفحة الموالية مع تكرار عناوين الأعمدة.",
       "خيار «توسيع الصفوف» يوسّع صفوف الجدول لملء الصفحة وتفادي الفراغات الكبيرة.",
@@ -524,7 +601,30 @@ var DOC = {
     cObjectifs:"Objectifs", cCompetences:"Compétences", cProf:"Activité du professeur",
     cEleve:"Activité de l'élève", cMoyens:"Moyens et supports", cEval:"Évaluation", cEtape:"Étape",
     page:"Page", of:"/", cont:"— suite du tableau des étapes —",
-    seeds:["Mise en situation","Construction des apprentissages","Évaluation / Trace écrite"]
+    seeds:["Mise en situation","Construction des apprentissages","Évaluation / Trace écrite"],
+    objHeader:"L'apprenant doit être capable de :", activite:"Activité", lecon:"Leçon",
+    tpl:[
+      {e:"Mise en situation",
+       p:"Présente la situation de départ et recueille les représentations des élèves.",
+       v:"Exprime ses représentations et formule le problème scientifique.",
+       k:"Compétence communicative : formuler un problème scientifique",
+       m:"Document d'accroche, data-show", x:"Évaluation diagnostique : questions orales"},
+      {e:"Construction des apprentissages",
+       p:"Distribue les documents, précise la consigne et guide l'analyse.",
+       v:"Observe, analyse les documents et formule des hypothèses.",
+       k:"Compétence méthodologique : analyser un document scientifique",
+       m:"Manuel scolaire, documents, matériel de TP", x:"Évaluation formative : questions orales et exercice d'application"},
+      {e:"Synthèse / Trace écrite",
+       p:"Anime la mise en commun et institutionnalise la trace écrite.",
+       v:"Participe à la synthèse et rédige la trace écrite.",
+       k:"Compétence communicative : rédiger une synthèse structurée",
+       m:"Tableau, cahier de l'élève", x:"Schéma bilan à compléter"},
+      {e:"Évaluation",
+       p:"Propose un exercice d'évaluation et assure le soutien.",
+       v:"Réalise l'exercice individuellement.",
+       k:"Compétence stratégique : résoudre une situation-problème",
+       m:"Fiche d'exercices", x:"Grille de correction et remédiation"}
+    ]
   },
   ar:{
     academie:"الأكاديمية الجهوية للتربية والتكوين", direction:"المديرية الإقليمية",
@@ -537,7 +637,30 @@ var DOC = {
     cObjectifs:"الأهداف", cCompetences:"الكفايات", cProf:"نشاط الأستاذ",
     cEleve:"نشاط المتعلم", cMoyens:"الوسائل والدعامات", cEval:"التقويم", cEtape:"المرحلة",
     page:"الصفحة", of:"/", cont:"— تتمة جدول المراحل —",
-    seeds:["وضعية الانطلاق","بناء التعلمات","التقويم / الخلاصة"]
+    seeds:["وضعية الانطلاق","بناء التعلمات","التقويم / الخلاصة"],
+    objHeader:"أن يكون المتعلم قادرًا على:", activite:"نشاط", lecon:"الدرس",
+    tpl:[
+      {e:"وضعية الانطلاق",
+       p:"يقدم وضعية الانطلاق ويستقصي تمثلات المتعلمين.",
+       v:"يعبر عن تمثلاته ويصوغ المشكل العلمي.",
+       k:"كفاية تواصلية: صياغة مشكل علمي",
+       m:"وثيقة الانطلاق، المسلاط الضوئي", x:"تقويم تشخيصي: أسئلة شفوية"},
+      {e:"بناء التعلمات",
+       p:"يوزع الوثائق ويحدد التعليمة ويوجه التحليل.",
+       v:"يلاحظ ويحلل الوثائق ويصوغ فرضيات.",
+       k:"كفاية منهجية: تحليل وثيقة علمية",
+       m:"الكتاب المدرسي، وثائق، معدات الأشغال التطبيقية", x:"تقويم تكويني: أسئلة شفوية وتمرين تطبيقي"},
+      {e:"الخلاصة / الأثر الكتابي",
+       p:"يسير الاستثمار الجماعي ويثبت الأثر الكتابي.",
+       v:"يشارك في بناء الخلاصة ويحررها.",
+       k:"كفاية تواصلية: تحرير خلاصة منظمة",
+       m:"السبورة، دفتر المتعلم", x:"خطاطة حصيلة لإتمامها"},
+      {e:"التقويم",
+       p:"يقترح تمرينًا تقويميًا ويقدم الدعم.",
+       v:"ينجز التمرين بشكل فردي.",
+       k:"كفاية استراتيجية: حل وضعية-مشكلة",
+       m:"بطاقة تمارين", x:"شبكة تصحيح ومعالجة"}
+    ]
   }
 };
 
@@ -550,6 +673,412 @@ var DEFAULTS = {
        academie:"الأكاديمية الجهوية للتربية والتكوين لجهة درعة تافيلالت",
        direction:"المديرية الإقليمية تنغير", etablissement:"الثانوية التأهيلية تلمي",
        matiere:"علوم الحياة والأرض", professeur:"الأستاذ: عمري محمد" }
+};
+
+
+/* ============================================================
+   1 bis. PROGRAMME OFFICIEL DE SVT
+   Source : « Programmes des sections internationales du baccalauréat
+   marocain — Option français — Discipline SVT », MEN, 29-30 avril 2015.
+   t = titre (fr/ar) · pre = prérequis · ch = leçons · h = enveloppe horaire
+   c = contenus détaillés du programme (version française du document)
+   ============================================================ */
+var CURRICULUM = {
+
+"TCS":[
+ { n:1, sem:1, total:"51 h",
+   t:{fr:"Unité 1 : Science de l'environnement (Écologie)", ar:"الوحدة 1: علوم البيئة (الإيكولوجيا)"},
+   pre:{fr:["1ère année collégiale : Les relations entre les êtres vivants et leur interaction avec le milieu",
+            "1ère année collégiale : Les phénomènes géologiques externes"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "السنة الأولى إعدادي: الظواهر الجيولوجية الخارجية"]},
+   ch:[
+    {t:{fr:"Sortie écologique", ar:"الخرجة البيئية"}, h:"12 h",
+     c:["Quelques techniques du terrain","Réalisation de la sortie","Première approche du concept écosystème"]},
+    {t:{fr:"Les facteurs édaphiques et leurs relations avec les êtres vivants", ar:"العوامل الإيدافية وعلاقتها بالكائنات الحية"}, h:"9 h",
+     c:["Propriétés du sol","Rôle du sol dans la répartition des êtres vivants","Rôle des êtres vivants dans l'évolution du sol","Impact de l'Homme sur le sol"]},
+    {t:{fr:"Les facteurs climatiques et leurs relations avec les êtres vivants", ar:"العوامل المناخية وعلاقتها بالكائنات الحية"}, h:"9 h",
+     c:["Les facteurs climatiques","Rôle des facteurs climatiques dans la répartition des êtres vivants","L'importance de connaître et de maîtriser les facteurs climatiques dans le domaine agricole"]},
+    {t:{fr:"Flux de la matière et flux de l'énergie dans l'écosystème", ar:"تدفق المادة وتدفق الطاقة داخل النظام البيئي"}, h:"9 h",
+     c:["Les relations trophiques","Les réseaux trophiques","Les pyramides de biomasse et les pyramides d'énergie","Définition du concept écosystème","Aspects dynamiques de l'écosystème"]},
+    {t:{fr:"Les équilibres naturels", ar:"التوازنات الطبيعية"}, h:"6 h",
+     c:["Dangers de l'exploitation irrationnelle des ressources naturelles","Nécessité de préserver les équilibres naturels et rôle de l'Homme dans la protection de la nature"]}
+   ]},
+ { n:2, sem:2, total:"51 h",
+   t:{fr:"Unité 2 : La reproduction chez les plantes", ar:"الوحدة 2: التوالد عند النباتات"},
+   pre:{fr:["2ème année collégiale : La reproduction chez les êtres vivants"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية"]},
+   ch:[
+    {t:{fr:"La reproduction chez les angiospermes", ar:"التوالد عند كاسيات البذور"}, h:"12 h",
+     c:["Observation et dissection de différentes fleurs","Organisation de l'appareil reproducteur","Rôle des grains de pollen dans la formation du fruit : pollinisation, ses différents types et son importance agricole","Germination des grains de pollen","La double fécondation ; formation de la graine et sa germination"]},
+    {t:{fr:"La reproduction chez les gymnospermes", ar:"التوالد عند عاريات البذور"}, h:"6 h", c:[]},
+    {t:{fr:"La reproduction sexuée chez les algues", ar:"التوالد الجنسي عند الطحالب"}, h:"3 h", c:[]},
+    {t:{fr:"La reproduction chez une fougère et chez une mousse", ar:"التوالد عند السرخس والحزاز"}, h:"6 h", c:[]},
+    {t:{fr:"Cycles de développement des plantes", ar:"دورات نمو النباتات"}, h:"6 h", c:[]},
+    {t:{fr:"La reproduction asexuée", ar:"التوالد اللاجنسي"}, h:"6 h",
+     c:["La multiplication végétative","Les applications de la multiplication végétative dans le domaine agricole : greffage, bouturage et marcottage"]},
+    {t:{fr:"La modification génétique des plantes (PGM)", ar:"التعديل الوراثي للنباتات"}, h:"3 h",
+     c:["Techniques de la modification génétique des plantes","Problématique de la modification génétique des plantes"]},
+    {t:{fr:"Classification des plantes", ar:"تصنيف النباتات"}, h:"3 h", c:[]}
+   ]}
+],
+
+"1BAC SE":[
+ { n:1, sem:1, total:"34 h",
+   t:{fr:"Unité 1 : Les phénomènes géologiques externes (Géodynamique externe)", ar:"الوحدة 1: الظواهر الجيولوجية الخارجية"},
+   pre:{fr:["1ère année collégiale : Les relations entre les êtres vivants et leur interaction avec le milieu",
+            "1ère année collégiale : Les phénomènes géologiques externes"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "السنة الأولى إعدادي: الظواهر الجيولوجية الخارجية"]},
+   ch:[
+    {t:{fr:"Réalisation de la carte paléogéographique d'une région", ar:"إنجاز الخريطة الجغرافية القديمة لمنطقة ما"}, h:"11 h",
+     c:["Les études granulométriques et morphoscopiques des sédiments : les figures sédimentaires ; dynamique et agents du transport des sédiments","Détermination des conditions de sédimentation dans les principaux milieux de sédimentation actuels","Détermination des conditions de sédimentation dans un milieu de sédimentation ancien (mer de phosphates ou bassin houiller de Jerada)","Réalisation de la carte paléogéographique du milieu étudié"]},
+    {t:{fr:"Reconstitution de l'histoire géologique d'une région sédimentaire et fondements de la carte géologique", ar:"إعادة تركيب التاريخ الجيولوجي لمنطقة رسوبية وإرساء أسس الخريطة الجيولوجية"}, h:"13 h",
+     c:["Les principes stratigraphiques et la datation relative : principe de superposition et principe de continuité","Le contenu paléontologique : notion de fossile stratigraphique et principe d'identité paléontologique","Le cycle sédimentaire : établissement de l'échelle stratigraphique","Notion de lacune stratigraphique"]},
+    {t:{fr:"Bilan : la carte géologique et les coupes géologiques", ar:"حصيلة: الخريطة الجيولوجية والمقاطع الجيولوجية"}, h:"6 h",
+     c:["La carte géologique : bilan synthétique des études stratigraphiques","Reconstitution de l'histoire géologique d'une région à l'aide de la carte géologique","Réalisation de coupes géologiques"]}
+   ]},
+ { n:2, sem:1, total:"34 h",
+   t:{fr:"Unité 2 : Production de la matière organique", ar:"الوحدة 2: إنتاج المادة العضوية"},
+   pre:{fr:["1ère année collégiale : Relations entre les êtres vivants et leur interaction avec le milieu",
+            "3ème année collégiale : Les fonctions de nutrition — L'éducation nutritionnelle",
+            "Tronc commun scientifique : Science de l'environnement — La reproduction chez les plantes"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "السنة الثالثة إعدادي: وظائف التغذية — التربية الغذائية",
+            "الجذع المشترك العلمي: علوم البيئة — التوالد عند النباتات"]},
+   ch:[
+    {t:{fr:"Mécanismes d'absorption de l'eau et des sels minéraux chez les plantes", ar:"آليات امتصاص الماء والأملاح المعدنية عند النباتات"}, h:"8 h",
+     c:["Notion d'osmose","Notions de diffusion et de transport actif","Structure et ultrastructure de la membrane cytoplasmique et de la paroi squelettique","Rôle des poils absorbants dans l'absorption de l'eau et des sels minéraux"]},
+    {t:{fr:"Les échanges gazeux chlorophylliens", ar:"المبادلات الغازية اليخضورية"}, h:"6 h",
+     c:["Absorption du CO2 et dégagement d'O2","Les facteurs influençant ces échanges","Structure des stomates et leur rôle dans ces échanges"]},
+    {t:{fr:"Production de la matière organique par les plantes", ar:"إنتاج المادة العضوية من طرف النباتات"}, h:"4 h",
+     c:["Présence de l'amidon dans une plante","Glucides, lipides et protides"]},
+    {t:{fr:"Rôle des pigments chlorophylliens dans la captation de l'énergie lumineuse", ar:"دور الصباغات اليخضورية في التقاط الطاقة الضوئية"}, h:"4 h",
+     c:["Extraction de la chlorophylle : les différents pigments chlorophylliens","Propriétés des pigments chlorophylliens : absorption des rayons lumineux et fluorescence","Structure et ultrastructure du chloroplaste"]},
+    {t:{fr:"Les principales réactions de la photosynthèse", ar:"التفاعلات الأساسية للتركيب الضوئي"}, h:"6 h",
+     c:["Rôle des pigments chlorophylliens dans la conversion de l'énergie lumineuse en énergie chimique","Oxydation de l'eau et production d'ATP : réactions de la phase lumineuse","Hydrolyse de l'ATP, réduction du CO2 et production de la matière organique : réactions de la phase obscure (cycle de Calvin simplifié)"]},
+    {t:{fr:"Diversité des sources de matière et d'énergie utilisées par les êtres vivants", ar:"تنوع مصادر المادة والطاقة عند الكائنات الحية"}, h:"2 h",
+     c:["La matière minérale et la matière organique","L'énergie lumineuse et l'énergie chimique"]}
+   ]},
+ { n:3, sem:2, total:"34 h",
+   t:{fr:"Unité 3 : Les communications hormonales et nerveuses", ar:"الوحدة 3: التواصل الهرموني والعصبي"},
+   pre:{fr:["3ème année collégiale : Les fonctions de relation"],
+        ar:["السنة الثالثة إعدادي: وظائف العلاقة"]},
+   ch:[
+    {t:{fr:"La communication hormonale", ar:"التواصل الهرموني"}, h:"13 h",
+     c:["La glycémie : constante biologique","L'hormone et la glande endocrine","Rôle de l'insuline et du glucagon dans la régulation de la glycémie","Les structures responsables de la sécrétion de l'insuline et du glucagon","Rôle de la concentration du glucose dans le déclenchement des sécrétions hormonales pancréatiques","Mode d'action des hormones : réception, traduction et réponse au message hormonal"]},
+    {t:{fr:"La communication nerveuse", ar:"التواصل العصبي"}, h:"17 h",
+     c:["Propriétés du nerf : l'excitabilité et la conductibilité","Nature du message nerveux : naissance du message nerveux et rôle de la membrane cytoplasmique","Propriétés de la fibre nerveuse","La synapse : mécanismes de la transmission synaptique"]}
+   ]},
+ { n:4, sem:2, total:"34 h",
+   t:{fr:"Unité 4 : L'intégration neuro-hormonale", ar:"الوحدة 4: التكامل العصبي الهرموني"},
+   pre:{fr:["2ème année collégiale : La reproduction chez les êtres vivants",
+            "3ème année collégiale : Les fonctions de relation",
+            "1ère année du baccalauréat SE : Les communications hormonales et nerveuses (unité 3)"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية",
+            "السنة الثالثة إعدادي: وظائف العلاقة",
+            "الأولى باكالوريا علوم تجريبية: التواصل الهرموني والعصبي (الوحدة 3)"]},
+   ch:[
+    {t:{fr:"Régulation de la reproduction chez l'Homme", ar:"تنظيم التوالد عند الإنسان"}, h:"17 h",
+     c:["Physiologie de l'appareil génital de l'homme : rôle du testicule (sans traiter les phases de la gamétogenèse)","Physiologie de l'appareil génital de la femme : rôle de l'ovaire","La relation fonctionnelle entre l'ovaire et l'utérus : cycle utérin, cycle ovarien et hormones ovariennes","Rôle de l'hypophyse et de l'hypothalamus dans la régulation des sécrétions hormonales sexuelles : notion de feedback"]},
+    {t:{fr:"Généralisation du concept de l'intégration neuro-hormonale", ar:"تعميم مفهوم التكامل العصبي الهرموني"}, h:"13 h",
+     c:["Régulation de la pression artérielle : la pression artérielle, constante biologique","Relation entre les variations de la pression artérielle, la fréquence cardiaque et le débit cardiaque","Le maintien de l'équilibre hydro-minéral du milieu intérieur"]}
+   ]}
+],
+
+"1BAC LSH":[
+ { n:1, sem:1, total:"17 h",
+   t:{fr:"Unité 1 : La reproduction chez l'Homme", ar:"الوحدة 1: التوالد عند الإنسان"},
+   pre:{fr:["2ème année collégiale : La reproduction des êtres vivants et transmission des caractères héréditaires chez l'Homme",
+            "3ème année collégiale : L'immunité",
+            "Tronc commun littéraire : L'Homme et l'environnement"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية وانتقال الصفات الوراثية عند الإنسان",
+            "السنة الثالثة إعدادي: المناعة",
+            "الجذع المشترك الأدبي: الإنسان والبيئة"]},
+   ch:[
+    {t:{fr:"Physiologie de l'appareil génital de l'homme", ar:"فيزيولوجيا الجهاز التناسلي عند الرجل"}, h:"4 h",
+     c:["Rôle du testicule dans la production des gamètes et dans la sécrétion des hormones","Les structures responsables de la production des hormones et des gamètes mâles","Comparaison entre le caryotype d'une spermatogonie et celui d'un spermatozoïde : notion de réduction chromatique","Phases de la spermatogenèse","Rôle de l'hypophyse et de l'hypothalamus dans la régulation de l'activité du testicule"]},
+    {t:{fr:"Physiologie de l'appareil génital de la femme", ar:"فيزيولوجيا الجهاز التناسلي عند المرأة"}, h:"4 h",
+     c:["Rôle de l'ovaire dans la production des gamètes et dans la sécrétion des hormones","Les structures responsables de la production des hormones et des gamètes femelles","Les relations fonctionnelles entre l'ovaire et l'utérus : le cycle ovarien et le cycle utérin","Les phases de l'ovogenèse","Rôle de l'hypophyse et de l'hypothalamus dans la régulation de l'activité de l'ovaire"]},
+    {t:{fr:"De la fécondation à la naissance", ar:"من الإخصاب إلى الولادة"}, h:"3 h",
+     c:["Les étapes de la fécondation","Les étapes de la migration et de la nidation","La grossesse et l'accouchement"]},
+    {t:{fr:"La régulation des naissances", ar:"تنظيم النسل"}, h:"1 h", c:[]},
+    {t:{fr:"Les maladies sexuellement transmissibles", ar:"الأمراض المنقولة جنسيًا"}, h:"1 h", c:[]}
+   ]},
+ { n:2, sem:2, total:"17 h",
+   t:{fr:"Unité 2 : La génétique humaine", ar:"الوحدة 2: علم الوراثة البشرية"},
+   pre:{fr:["2ème année collégiale : La reproduction des êtres vivants et transmission des caractères héréditaires chez l'Homme",
+            "3ème année collégiale : L'éducation à la santé",
+            "Unité 1 : La reproduction chez l'Homme"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية وانتقال الصفات الوراثية عند الإنسان",
+            "السنة الثالثة إعدادي: التربية الصحية",
+            "الوحدة 1: التوالد عند الإنسان"]},
+   ch:[
+    {t:{fr:"Rôle de la méiose et de la fécondation dans la répartition et le brassage des chromosomes", ar:"دور الانقسام الاختزالي والإخصاب في توزيع وخلط الصبغيات"}, h:"4 h",
+     c:["Comparaison entre le caryotype de l'homme et celui de la femme : chromosomes sexuels, autosomes, notion de formule chromosomique","Rôle de la méiose dans la répartition et le brassage des chromosomes : garniture chromosomique du gamète mâle et du gamète femelle","Rôle de la fécondation dans le rétablissement de la diploïdie"]},
+    {t:{fr:"Transmission des caractères héréditaires d'une génération à une autre", ar:"انتقال الصفات الوراثية من جيل إلى آخر"}, h:"5 h",
+     c:["Le phénotype et le caractère héréditaire","Le génotype, le gène et l'allèle","L'allèle dominant, l'allèle récessif et la codominance","Analyse des arbres généalogiques relatifs à la transmission de quelques maladies héréditaires (liées et non liées au sexe) ; dangers des mariages consanguins","Importance du diagnostic prénatal"]},
+    {t:{fr:"Quelques anomalies chromosomiques chez l'Homme", ar:"بعض الشذوذات الصبغية عند الإنسان"}, h:"2 h", c:[]},
+    {t:{fr:"Notion de mutation", ar:"مفهوم الطفرة"}, h:"2 h",
+     c:["Définition et caractéristiques","Agents responsables de quelques mutations","Exemples de mutations chez l'Homme"]}
+   ]}
+],
+
+"2BAC SVT":[
+ { n:1, sem:1, total:"34 h",
+   t:{fr:"Unité 1 : Consommation de la matière organique et flux d'énergie", ar:"الوحدة 1: استهلاك المادة العضوية وتدفق الطاقة"},
+   pre:{fr:["1ère année collégiale : Les relations entre les êtres vivants et leur interaction avec le milieu",
+            "3ème année collégiale : Les fonctions de nutrition — L'éducation nutritionnelle",
+            "Tronc commun scientifique : Science de l'environnement — La reproduction chez les plantes",
+            "1ère année du baccalauréat SE : Production de la matière organique et flux d'énergie"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "السنة الثالثة إعدادي: وظائف التغذية — التربية الغذائية",
+            "الجذع المشترك العلمي: علوم البيئة — التوالد عند النباتات",
+            "الأولى باكالوريا علوم تجريبية: إنتاج المادة العضوية وتدفق الطاقة"]},
+   ch:[
+    {t:{fr:"Les réactions responsables de la libération de l'énergie emmagasinée dans la matière organique au niveau de la cellule", ar:"التفاعلات المسؤولة عن تحرير الطاقة المختزنة في المادة العضوية على مستوى الخلية"}, h:"15 h",
+     c:["Les phases de la glycolyse au niveau du hyaloplasme","Les principales phases du cycle de Krebs au niveau de la mitochondrie et rôle des chaînes respiratoires dans la phosphorylation oxydative","Ultrastructure de la mitochondrie","Les phases principales de la fermentation","Comparaison du bilan énergétique de la respiration et de la fermentation : notion de rendement énergétique"]},
+    {t:{fr:"Rôle du muscle strié squelettique dans la conversion de l'énergie", ar:"دور العضلة المخططة الهيكلية في تحويل الطاقة"}, h:"12 h",
+     c:["Enregistrement des contractions musculaires et analyse des myogrammes obtenus","Les phénomènes thermiques et chimiques accompagnant la contraction musculaire","Mécanismes de la contraction musculaire ; structure et ultrastructure de la cellule du muscle strié squelettique","Consommation de l'ATP et libération de l'énergie nécessaire à la contraction musculaire","Renouvellement de l'ATP et ses différentes voies"]},
+    {t:{fr:"Bilan : schéma de synthèse de la consommation de la matière et du flux d'énergie au niveau de la cellule", ar:"حصيلة: خطاطة تركيبية لاستهلاك المادة وتدفق الطاقة على مستوى الخلية"}, h:"2 h", c:[]}
+   ]},
+ { n:2, sem:1, total:"34 h",
+   t:{fr:"Unité 2 : Nature et mécanisme de l'expression du matériel génétique — Le génie génétique", ar:"الوحدة 2: طبيعة الخبر الوراثي وآلية تعبيره — الهندسة الوراثية"},
+   pre:{fr:["2ème année collégiale : La reproduction chez les êtres vivants et la transmission des caractères héréditaires chez l'Homme",
+            "Tronc commun scientifique : La reproduction chez les plantes"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية وانتقال الصفات الوراثية عند الإنسان",
+            "الجذع المشترك العلمي: التوالد عند النباتات"]},
+   ch:[
+    {t:{fr:"Notion de l'information génétique", ar:"مفهوم الخبر الوراثي"}, h:"14 h",
+     c:["Localisation de l'information génétique dans le noyau cellulaire","Rôle des chromosomes dans le transfert de l'information génétique d'une cellule à une autre : étapes de la mitose chez une cellule végétale et chez une cellule animale ; le cycle cellulaire","Nature chimique du matériel génétique : composition et structure des chromosomes et de la molécule d'ADN","Mécanisme de la duplication de l'ADN","Définition du caractère, du gène, de l'allèle et de la mutation","Relation caractère-protéine et relation gène-protéine","Signification génétique de la mutation — le code génétique"]},
+    {t:{fr:"Mécanisme de l'expression de l'information génétique : étapes de la synthèse des protéines", ar:"آلية تعبير الخبر الوراثي: مراحل تركيب البروتينات"}, h:"4 h",
+     c:["La transcription","La traduction : l'initiation, l'élongation et la terminaison"]},
+    {t:{fr:"Le génie génétique : ses principes et ses techniques", ar:"الهندسة الوراثية: مبادئها وتقنياتها"}, h:"11 h",
+     c:["Étapes du transfert d'un gène : notion de modification génétique","Transfert des gènes d'Agrobacterium tumefaciens vers une plante","Transfert d'un gène vers une bactérie donnée","Production industrielle de l'insuline humaine","Production industrielle des protéines toxiques contre les insectes nuisibles"]}
+   ]},
+ { n:3, sem:1, total:"34 h",
+   t:{fr:"Unité 3 : Transfert de l'information génétique au cours de la reproduction sexuée — La génétique humaine", ar:"الوحدة 3: انتقال الخبر الوراثي عبر التوالد الجنسي — علم الوراثة البشرية"},
+   pre:{fr:["2ème année collégiale : La reproduction chez les êtres vivants et transmission des caractères héréditaires chez l'Homme",
+            "Tronc commun scientifique : La reproduction chez les plantes"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية وانتقال الصفات الوراثية عند الإنسان",
+            "الجذع المشترك العلمي: التوالد عند النباتات"]},
+   ch:[
+    {t:{fr:"Transfert de l'information génétique au cours de la reproduction sexuée", ar:"انتقال الخبر الوراثي عبر التوالد الجنسي"}, h:"10 h",
+     c:["Rôle de la méiose et de la fécondation dans le brassage des allèles et dans la conservation du nombre des chromosomes d'une génération à une autre au sein de la même espèce","Étapes de la méiose","Observation des cartes chromosomiques des espèces diploïdes"]},
+    {t:{fr:"Les lois statistiques de la transmission des caractères héréditaires chez les diploïdes", ar:"القوانين الإحصائية لانتقال الصفات الوراثية عند ثنائيات الصيغة الصبغية"}, h:"10 h",
+     c:["Transmission d'un couple d'allèles et son interprétation chromosomique : cas d'un gène non lié au sexe (dominance, codominance, gène létal)","Cas d'un gène lié au sexe","Transmission de deux couples d'allèles et son interprétation chromosomique (deux gènes indépendants, deux gènes liés)","Importance du crossing-over dans la diversité des générations et dans l'établissement de la carte factorielle"]},
+    {t:{fr:"La génétique humaine", ar:"علم الوراثة البشرية"}, h:"9 h",
+     c:["Les arbres généalogiques et les cartes chromosomiques : maladies héréditaires non liées aux chromosomes sexuels","Maladies héréditaires liées aux chromosomes sexuels","Les anomalies chromosomiques et leurs conséquences","Possibilités du diagnostic prénatal d'anomalie chromosomique et son importance"]}
+   ]},
+ { n:4, sem:2, total:"34 h",
+   t:{fr:"Unité 4 : La génétique des populations", ar:"الوحدة 4: وراثة الساكنة"},
+   pre:{fr:["1ère année collégiale : Les relations entre les êtres vivants et leur interaction avec le milieu",
+            "Tronc commun scientifique : Science de l'environnement — La reproduction chez les plantes",
+            "2ème année du baccalauréat SVT : unités 2 et 3 du premier semestre"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "الجذع المشترك العلمي: علوم البيئة — التوالد عند النباتات",
+            "الثانية باكالوريا علوم الحياة والأرض: الوحدتان 2 و3 من الأسدس الأول"]},
+   ch:[
+    {t:{fr:"Équilibre de la population", ar:"توازن الساكنة"}, h:"10 h",
+     c:["Notion de population","Le contenu génique de la population (le pool de gènes)","Loi de Hardy-Weinberg"]},
+    {t:{fr:"Les facteurs de variation de la population", ar:"عوامل تغير الساكنة"}, h:"16 h",
+     c:["Les mutations","La sélection naturelle","La dérive génique (sans traiter ses mécanismes)","La migration"]},
+    {t:{fr:"Les critères spécifiques de l'espèce — définition de l'espèce", ar:"المعايير النوعية للنوع — تعريف النوع"}, h:"3 h",
+     c:["Les critères spécifiques de l'espèce","Définition de l'espèce"]}
+   ]},
+ { n:5, sem:2, total:"34 h",
+   t:{fr:"Unité 5 : L'immunologie", ar:"الوحدة 5: علم المناعة"},
+   pre:{fr:["2ème année collégiale : La reproduction chez les êtres vivants et transmission des caractères héréditaires chez l'Homme",
+            "3ème année collégiale : L'immunologie",
+            "2ème année du baccalauréat SVT : Nature et mécanisme de l'expression du matériel génétique (unité 2)"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية وانتقال الصفات الوراثية عند الإنسان",
+            "السنة الثالثة إعدادي: علم المناعة",
+            "الثانية باكالوريا علوم الحياة والأرض: طبيعة الخبر الوراثي وآلية تعبيره (الوحدة 2)"]},
+   ch:[
+    {t:{fr:"Notions du soi et du non-soi", ar:"مفهوما الذات واللاذات"}, h:"4 h",
+     c:["Les marqueurs du soi : complexe majeur d'histocompatibilité","Marqueurs des groupes sanguins"]},
+    {t:{fr:"Moyens de défense du soi", ar:"وسائل الدفاع عن الذات"}, h:"14 h",
+     c:["Moyens de défense non spécifiques","Moyens de défense spécifiques : mécanismes de la réaction immunitaire à médiation cellulaire","Mécanismes de la réaction immunitaire à médiation humorale","Bilan : schéma de synthèse des étapes des réactions immunitaires"]},
+    {t:{fr:"Quelques dysfonctionnements du système immunitaire", ar:"بعض اختلالات الجهاز المناعتي"}, h:"8 h",
+     c:["L'allergie due à l'hypersensibilité immédiate","Le syndrome d'immunodéficience acquise (SIDA)"]},
+    {t:{fr:"Moyens d'aide du système immunitaire", ar:"وسائل مساعدة الجهاز المناعتي"}, h:"3 h",
+     c:["La vaccination","La sérothérapie","La greffe de la moelle osseuse"]}
+   ]},
+ { n:6, sem:2, total:"34 h",
+   t:{fr:"Unité 6 : Les phénomènes géologiques accompagnant la formation des chaînes de montagnes et leur relation avec la tectonique des plaques", ar:"الوحدة 6: الظواهر الجيولوجية المصاحبة لتكون السلاسل الجبلية وعلاقتها بتكتونية الصفائح"},
+   pre:{fr:["1ère année collégiale : Les phénomènes géologiques externes",
+            "2ème année collégiale : Les phénomènes géologiques internes",
+            "1ère année du baccalauréat SE : Les phénomènes géologiques externes"],
+        ar:["السنة الأولى إعدادي: الظواهر الجيولوجية الخارجية",
+            "السنة الثانية إعدادي: الظواهر الجيولوجية الداخلية",
+            "الأولى باكالوريا علوم تجريبية: الظواهر الجيولوجية الخارجية"]},
+   ch:[
+    {t:{fr:"Les chaînes de montagnes récentes et leur relation avec la tectonique des plaques", ar:"السلاسل الجبلية الحديثة وعلاقتها بتكتونية الصفائح"}, h:"4 h",
+     c:["Les chaînes de subduction","Les chaînes de collision","Les chaînes d'obduction"]},
+    {t:{fr:"Nature des déformations tectoniques caractéristiques des chaînes de subduction et de collision", ar:"طبيعة التشوهات التكتونية المميزة لسلاسل الطمر وسلاسل الاصطدام"}, h:"4 h",
+     c:["Les plis","Les failles","Les nappes de charriage"]},
+    {t:{fr:"Le métamorphisme et sa relation avec la tectonique des plaques", ar:"التحول وعلاقته بتكتونية الصفائح"}, h:"11 h",
+     c:["Les caractéristiques minéralogiques et structurales des roches métamorphiques au niveau des zones de subduction et de collision","Les conditions de température et de pression responsables de la formation des roches métamorphiques","Notions de minéral indicateur et de série métamorphique","Notions de métamorphisme de subduction (dynamique) et de métamorphisme dynamo-thermique"]},
+    {t:{fr:"La granitisation et sa relation avec le métamorphisme", ar:"التكون الغرانيتي وعلاقته بالتحول"}, h:"8 h",
+     c:["Origine et mise en place du granite d'anatexie : relation entre les roches granitiques et les roches métamorphiques avoisinantes","Étude comparative de la structure et de la composition minéralogique du granite d'anatexie et des roches métamorphiques avoisinantes","Effet de l'intrusion du magma granitique sur les roches avoisinantes : notion de métamorphisme de contact"]},
+    {t:{fr:"Bilan : relation des différents phénomènes géologiques étudiés avec la tectonique des plaques", ar:"حصيلة: علاقة الظواهر الجيولوجية المدروسة بتكتونية الصفائح"}, h:"2 h", c:[]}
+   ]}
+],
+
+"2BAC PC":[
+ { n:1, sem:1, total:"34 h",
+   t:{fr:"Unité 1 : Consommation de la matière organique et flux d'énergie", ar:"الوحدة 1: استهلاك المادة العضوية وتدفق الطاقة"},
+   pre:{fr:["1ère année collégiale : Les relations entre les êtres vivants et leur interaction avec le milieu",
+            "3ème année collégiale : Les fonctions de nutrition et l'éducation nutritionnelle — Les fonctions de relation",
+            "Tronc commun scientifique : Science de l'environnement — La reproduction chez les plantes",
+            "1ère année du baccalauréat SE : Production de la matière organique et flux d'énergie"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "السنة الثالثة إعدادي: وظائف التغذية والتربية الغذائية — وظائف العلاقة",
+            "الجذع المشترك العلمي: علوم البيئة — التوالد عند النباتات",
+            "الأولى باكالوريا علوم تجريبية: إنتاج المادة العضوية وتدفق الطاقة"]},
+   ch:[
+    {t:{fr:"Les réactions responsables de la libération de l'énergie emmagasinée dans la matière organique au niveau de la cellule", ar:"التفاعلات المسؤولة عن تحرير الطاقة المختزنة في المادة العضوية على مستوى الخلية"}, h:"14 h",
+     c:["Les phases de la glycolyse au niveau du hyaloplasme","Les principales phases du cycle de Krebs au niveau de la mitochondrie et rôle des chaînes respiratoires dans la phosphorylation oxydative","Ultrastructure de la mitochondrie","Les phases principales de la fermentation","Comparaison du bilan énergétique de la respiration et de la fermentation : notion de rendement énergétique"]},
+    {t:{fr:"Rôle du muscle strié squelettique dans la conversion de l'énergie", ar:"دور العضلة المخططة الهيكلية في تحويل الطاقة"}, h:"14 h",
+     c:["Enregistrement des contractions musculaires et analyse des myogrammes obtenus","Les phénomènes thermiques et chimiques accompagnant la contraction musculaire","Mécanismes de la contraction musculaire ; structure et ultrastructure de la cellule du muscle strié squelettique","Consommation de l'ATP et libération de l'énergie nécessaire à la contraction musculaire","Renouvellement de l'ATP et ses différentes voies"]},
+    {t:{fr:"Bilan : schéma de synthèse de la consommation de la matière et du flux d'énergie au niveau de la cellule", ar:"حصيلة: خطاطة تركيبية لاستهلاك المادة وتدفق الطاقة على مستوى الخلية"}, h:"2 h", c:[]}
+   ]},
+ { n:2, sem:1, total:"34 h",
+   t:{fr:"Unité 2 : Nature et mécanisme de l'expression du matériel génétique — Transfert de l'information génétique au cours de la reproduction sexuée", ar:"الوحدة 2: طبيعة الخبر الوراثي وآلية تعبيره — انتقال الخبر الوراثي عبر التوالد الجنسي"},
+   pre:{fr:["2ème année collégiale : La reproduction chez les êtres vivants et transmission des caractères héréditaires chez l'Homme",
+            "Tronc commun scientifique : La reproduction chez les plantes"],
+        ar:["السنة الثانية إعدادي: التوالد عند الكائنات الحية وانتقال الصفات الوراثية عند الإنسان",
+            "الجذع المشترك العلمي: التوالد عند النباتات"]},
+   ch:[
+    {t:{fr:"Notion de l'information génétique", ar:"مفهوم الخبر الوراثي"}, h:"12 h",
+     c:["Localisation de l'information héréditaire dans le noyau cellulaire","Rôle des chromosomes dans le transfert de l'information génétique d'une cellule à une autre : étapes de la mitose ; le cycle cellulaire","Nature chimique du matériel génétique : composition et structure de la molécule d'ADN","Mécanisme de la duplication de l'ADN","Première approche des notions de caractère, gène et allèle ; notion de mutation","Relation caractère-protéine et relation gène-protéine","Signification génétique de la mutation — le code génétique"]},
+    {t:{fr:"Mécanisme de l'expression de l'information génétique : étapes de la synthèse des protéines", ar:"آلية تعبير الخبر الوراثي: مراحل تركيب البروتينات"}, h:"4 h",
+     c:["La transcription","La traduction : l'initiation, l'élongation et la terminaison"]},
+    {t:{fr:"Transfert de l'information génétique par la reproduction sexuée", ar:"انتقال الخبر الوراثي عبر التوالد الجنسي"}, h:"6 h",
+     c:["Rôle de la méiose et de la fécondation dans le brassage des allèles et dans la conservation du nombre des chromosomes","Étapes de la méiose","Observation des cartes chromosomiques des espèces diploïdes"]},
+    {t:{fr:"Les lois statistiques de la transmission des caractères héréditaires chez les diploïdes", ar:"القوانين الإحصائية لانتقال الصفات الوراثية عند ثنائيات الصيغة الصبغية"}, h:"8 h",
+     c:["Transmission d'un couple d'allèles et son interprétation chromosomique : cas d'un gène non lié au sexe (dominance, codominance, gène létal)","Cas d'un gène lié au sexe","Transmission de deux couples d'allèles et son interprétation chromosomique (deux gènes indépendants, deux gènes liés)","Importance du crossing-over dans la diversité des générations et l'établissement de la carte factorielle"]}
+   ]},
+ { n:3, sem:2, total:"34 h",
+   t:{fr:"Unité 3 : Utilisation des matières organiques et inorganiques", ar:"الوحدة 3: استعمال المواد العضوية وغير العضوية"},
+   pre:{fr:["1ère année collégiale : Les relations entre les êtres vivants et leur interaction avec le milieu",
+            "3ème année collégiale : L'éducation à la santé",
+            "Tronc commun scientifique : Science de l'environnement"],
+        ar:["السنة الأولى إعدادي: العلاقات بين الكائنات الحية وتفاعلها مع الوسط",
+            "السنة الثالثة إعدادي: التربية الصحية",
+            "الجذع المشترك العلمي: علوم البيئة"]},
+   ch:[
+    {t:{fr:"Les ordures ménagères issues de l'utilisation des matières organiques", ar:"النفايات المنزلية الناتجة عن استعمال المواد العضوية"}, h:"8 h",
+     c:["L'élimination des ordures et moyens de leur traitement : le tri","Techniques de réutilisation et d'industrialisation","Les impacts sur l'environnement, sur la santé et sur l'économie"]},
+    {t:{fr:"Les pollutions liées à la consommation des matières énergétiques et à l'utilisation des matières organiques et inorganiques dans les industries", ar:"التلوثات المرتبطة باستهلاك المواد الطاقية واستعمال المواد العضوية وغير العضوية في الصناعات"}, h:"12 h",
+     c:["Les polluants et les milieux pollués","Les impacts sur la santé, l'environnement et l'économie","Les alternatives"]},
+    {t:{fr:"Les matières radioactives et l'énergie nucléaire", ar:"المواد المشعة والطاقة النووية"}, h:"7 h",
+     c:["Les matières radioactives","Les avantages","Les dangers de la pollution nucléaire","Problématique des déchets nucléaires","Les alternatives écologiques"]},
+    {t:{fr:"Contrôle de la qualité et de la salubrité des milieux naturels", ar:"مراقبة جودة وسلامة الأوساط الطبيعية"}, h:"3 h", c:[]}
+   ]},
+ { n:4, sem:2, total:"34 h",
+   t:{fr:"Unité 4 : Les phénomènes géologiques accompagnant la formation des chaînes de montagnes et leur relation avec la tectonique des plaques", ar:"الوحدة 4: الظواهر الجيولوجية المصاحبة لتكون السلاسل الجبلية وعلاقتها بتكتونية الصفائح"},
+   pre:{fr:["1ère année collégiale : Les phénomènes géologiques externes",
+            "2ème année collégiale : Les phénomènes géologiques internes",
+            "1ère année du baccalauréat SE : Les phénomènes géologiques externes"],
+        ar:["السنة الأولى إعدادي: الظواهر الجيولوجية الخارجية",
+            "السنة الثانية إعدادي: الظواهر الجيولوجية الداخلية",
+            "الأولى باكالوريا علوم تجريبية: الظواهر الجيولوجية الخارجية"]},
+   ch:[
+    {t:{fr:"Les chaînes de montagnes récentes et leur relation avec la tectonique des plaques", ar:"السلاسل الجبلية الحديثة وعلاقتها بتكتونية الصفائح"}, h:"5 h",
+     c:["Les chaînes de subduction","Les chaînes de collision","Les chaînes d'obduction"]},
+    {t:{fr:"Nature des déformations tectoniques caractéristiques des chaînes de subduction et de collision", ar:"طبيعة التشوهات التكتونية المميزة لسلاسل الطمر وسلاسل الاصطدام"}, h:"4 h",
+     c:["Les plis","Les failles","Les nappes de charriage"]},
+    {t:{fr:"Le métamorphisme et sa relation avec la tectonique des plaques", ar:"التحول وعلاقته بتكتونية الصفائح"}, h:"11 h",
+     c:["Les caractéristiques minéralogiques et structurales des roches métamorphiques au niveau des zones de subduction et de collision","Les conditions de température et de pression responsables de la formation des roches métamorphiques","Notions de minéral indicateur et de série métamorphique","Notions de métamorphisme de subduction (dynamique) et de métamorphisme dynamo-thermique"]},
+    {t:{fr:"La granitisation et sa relation avec le métamorphisme", ar:"التكون الغرانيتي وعلاقته بالتحول"}, h:"8 h",
+     c:["Origine et mise en place du granite d'anatexie : relation entre les roches granitiques et les roches métamorphiques avoisinantes","Étude comparative de la structure et de la composition minéralogique du granite d'anatexie et des roches métamorphiques avoisinantes","Effet de l'intrusion du magma granitique sur les roches avoisinantes : notion de métamorphisme de contact"]},
+    {t:{fr:"Bilan : relation des différents phénomènes géologiques étudiés avec la tectonique des plaques", ar:"حصيلة: علاقة الظواهر الجيولوجية المدروسة بتكتونية الصفائح"}, h:"2 h", c:[]}
+   ]}
+]
+
+};
+
+/* ============================================================
+   1 ter. BANQUES DE FORMULATIONS (listes de choix)
+   ============================================================ */
+var BANKS = {
+ objectifs:{
+  fr:["Définir les notions clés de la leçon","Décrire la structure étudiée","Expliquer le mécanisme étudié",
+      "Analyser des documents et en tirer une conclusion","Réaliser une expérience et interpréter ses résultats",
+      "Établir la relation entre la structure et la fonction","Réaliser et légender un schéma",
+      "Comparer deux phénomènes ou deux structures","Résoudre un exercice d'application",
+      "Construire un schéma bilan de la leçon"],
+  ar:["تعريف المفاهيم الأساسية للدرس","وصف البنية المدروسة","تفسير الآلية المدروسة",
+      "تحليل وثائق واستخلاص خلاصة","إنجاز تجربة وتأويل نتائجها",
+      "إبراز العلاقة بين البنية والوظيفة","إنجاز خطاطة ووضع بياناتها",
+      "المقارنة بين ظاهرتين أو بنيتين","حل تمرين تطبيقي",
+      "بناء خطاطة حصيلة للدرس"]},
+ competences:{
+  fr:["Compétence méthodologique : analyser un document scientifique","Compétence méthodologique : réaliser une manipulation expérimentale",
+      "Compétence communicative : s'exprimer avec un vocabulaire scientifique précis","Compétence stratégique : résoudre une situation-problème",
+      "Compétence culturelle : relier les acquis à la vie quotidienne","Raisonner scientifiquement : hypothèse, vérification, conclusion",
+      "Travailler en groupe et confronter les points de vue","Utiliser les TICE (logiciels, animations, vidéos)"],
+  ar:["كفاية منهجية: تحليل وثيقة علمية","كفاية منهجية: إنجاز مناولة تجريبية",
+      "كفاية تواصلية: التعبير بلغة علمية سليمة","كفاية استراتيجية: حل وضعية-مشكلة",
+      "كفاية ثقافية: ربط المكتسبات بالحياة اليومية","التفكير العلمي: الفرضية، التحقق، الاستنتاج",
+      "العمل في مجموعات ومواجهة وجهات النظر","توظيف تكنولوجيا المعلومات والاتصال"]},
+ prof:{
+  fr:["Pose la situation-problème et recueille les représentations des élèves","Distribue les documents et précise la consigne",
+      "Guide l'analyse des documents par un questionnement","Organise le travail en groupes",
+      "Réalise ou supervise la manipulation expérimentale","Anime la mise en commun des réponses",
+      "Corrige et institutionnalise la trace écrite","Propose un exercice d'évaluation",
+      "Assure le soutien des élèves en difficulté"],
+  ar:["يطرح الوضعية-المشكلة ويستقصي تمثلات المتعلمين","يوزع الوثائق ويحدد التعليمة",
+      "يوجه تحليل الوثائق عبر أسئلة موجهة","ينظم العمل في مجموعات",
+      "ينجز أو يشرف على المناولة التجريبية","يسير مرحلة استثمار الأجوبة",
+      "يصحح ويثبت الأثر الكتابي","يقترح تمرينًا تقويميًا",
+      "يقدم الدعم للمتعلمين المتعثرين"]},
+ eleve:{
+  fr:["Exprime ses représentations et formule le problème scientifique","Observe et décrit le document",
+      "Analyse le document et en extrait les informations utiles","Formule des hypothèses et propose une vérification",
+      "Réalise la manipulation et note les résultats","Confronte ses réponses avec celles de son groupe",
+      "Participe à la mise en commun","Rédige la synthèse et la trace écrite",
+      "Réalise l'exercice individuellement"],
+  ar:["يعبر عن تمثلاته ويصوغ المشكل العلمي","يلاحظ ويصف الوثيقة",
+      "يحلل الوثيقة ويستخرج المعطيات المفيدة","يصوغ فرضيات ويقترح طريقة التحقق",
+      "ينجز المناولة ويدون النتائج","يقارن أجوبته بأجوبة مجموعته",
+      "يشارك في الاستثمار الجماعي","يحرر الخلاصة والأثر الكتابي",
+      "ينجز التمرين بشكل فردي"]},
+ moyens:{
+  fr:["Manuel scolaire","Documents polycopiés","Tableau","Data-show / vidéoprojecteur","Vidéo ou animation numérique",
+      "Microscope optique et préparations microscopiques","Loupe binoculaire","Matériel de dissection",
+      "Échantillons de roches et de minéraux","Cartes et coupes géologiques","Modèles moléculaires (ADN, protéines)",
+      "Logiciels (Anagène, Phylogène, RasTop…)","Fiche d'activité","Sortie écologique et matériel de terrain"],
+  ar:["الكتاب المدرسي","وثائق مرقونة","السبورة","المسلاط الضوئي (Data-show)","شريط أو محاكاة رقمية",
+      "المجهر الضوئي ومستحضرات مجهرية","المكبر الثنائي","معدات التشريح",
+      "عينات صخرية ومعدنية","خرائط ومقاطع جيولوجية","نماذج جزيئية (ADN، بروتينات)",
+      "برانم معلوماتية (Anagène، Phylogène، RasTop)","بطاقة نشاط","خرجة بيئية ومعدات ميدانية"]},
+ evaluation:{
+  fr:["Évaluation diagnostique : questions orales","Évaluation formative : questions orales","Exercice d'application",
+      "Questions à choix multiples (QCM)","Schéma bilan à compléter","Analyse d'un document nouveau",
+      "Grille d'observation du travail de groupe","Devoir à la maison","Évaluation sommative de fin d'unité",
+      "Soutien et remédiation"],
+  ar:["تقويم تشخيصي: أسئلة شفوية","تقويم تكويني: أسئلة شفوية","تمرين تطبيقي",
+      "أسئلة متعددة الاختيارات (QCM)","خطاطة حصيلة لإتمامها","تحليل وثيقة جديدة",
+      "شبكة ملاحظة عمل المجموعات","واجب منزلي","تقويم إجمالي في نهاية الوحدة",
+      "دعم ومعالجة"]},
+ situation:{
+  fr:["À partir de l'observation du document suivant, comment expliquer … ?","Lors d'une sortie sur le terrain, les élèves ont constaté que …",
+      "Un article de presse rapporte que …","Les résultats de l'expérience suivante montrent que …",
+      "Quelle relation existe-t-il entre … et … ?","Comment l'organisme parvient-il à … ?"],
+  ar:["انطلاقًا من ملاحظة الوثيقة التالية، كيف يمكن تفسير …؟","خلال خرجة ميدانية، لاحظ المتعلمون أن …",
+      "ورد في مقال صحفي أن …","تبين نتائج التجربة التالية أن …",
+      "ما العلاقة بين … و…؟","كيف يتمكن الجسم من …؟"]},
+ prerequis:{
+  fr:["Les relations entre les êtres vivants et leur interaction avec le milieu","Les phénomènes géologiques externes",
+      "Les phénomènes géologiques internes","La reproduction chez les êtres vivants","Les fonctions de nutrition",
+      "Les fonctions de relation","L'immunité","La transmission des caractères héréditaires chez l'Homme",
+      "Les acquis de la leçon précédente"],
+  ar:["العلاقات بين الكائنات الحية وتفاعلها مع الوسط","الظواهر الجيولوجية الخارجية",
+      "الظواهر الجيولوجية الداخلية","التوالد عند الكائنات الحية","وظائف التغذية",
+      "وظائف العلاقة","المناعة","انتقال الصفات الوراثية عند الإنسان",
+      "مكتسبات الدرس السابق"]}
 };
 
 /* ============================================================
@@ -693,6 +1222,7 @@ function renderForm(){
     else inp.value = (f[k]==null?"":f[k]);
   });
   renderSteps();
+  refreshProg();
   $("#btnDup").disabled = $("#btnRen").disabled = $("#btnDel").disabled = !f;
 }
 
@@ -736,6 +1266,7 @@ function renderSteps(){
         if(fd[0]==="etape"){ h.firstChild.textContent = T("step")+" "+(i+1)+(hasText(ta.value)?" — "+ta.value:""); }
       };
       lab.appendChild(ta);
+      if(STEP_BANK[fd[0]]) addBankBtn(lab, STEP_BANK[fd[0]], function(){ return ta; });
       body.appendChild(lab);
     });
     wrap.appendChild(body);
@@ -747,6 +1278,133 @@ function moveStep(i,d){
   if(!f || j<0 || j>=f.steps.length) return;
   var tmp = f.steps[i]; f.steps[i]=f.steps[j]; f.steps[j]=tmp;
   touch(); renderSteps();
+}
+
+
+/* ============================================================
+   4 bis. ASSISTANT « PROGRAMME OFFICIEL » ET BANQUES
+   ============================================================ */
+var progSel = { u:"0", l:"all" };
+
+/* « 14 h » -> « 14 ساعة » en arabe */
+function hLabel(h, L){
+  if(L !== "ar") return h;
+  return String(h).replace(/\s*h\s*$/, " ساعة");
+}
+function progUnits(){ var f = active(); return (f && CURRICULUM[f.niveau]) || null; }
+
+function refreshProg(){
+  var f = active(), units = progUnits(), su = $("#progUnite"), sl = $("#progLecon"), L = state.uiLang;
+  su.innerHTML = ""; sl.innerHTML = "";
+  var on = !!(f && units);
+  su.disabled = sl.disabled = $("#progSteps").disabled = $("#btnProgFill").disabled = !on;
+  if(!on){ $("#progInfo").textContent = f ? T("pNoProg") : ""; return; }
+  units.forEach(function(u,i){ var o = el("option", null, u.t[L]); o.value = i; su.appendChild(o); });
+  if(+progSel.u >= units.length) progSel.u = "0";
+  su.value = progSel.u;
+  refreshLecons();
+}
+function refreshLecons(){
+  var units = progUnits(), L = state.uiLang, sl = $("#progLecon");
+  sl.innerHTML = "";
+  if(!units) return;
+  var u = units[+$("#progUnite").value]; if(!u) return;
+  var oa = el("option", null, T("pAll")); oa.value = "all"; sl.appendChild(oa);
+  u.ch.forEach(function(c,i){
+    var o = el("option", null, (i+1)+". "+c.t[L]+"  ("+hLabel(c.h,L)+")"); o.value = i; sl.appendChild(o);
+  });
+  sl.value = progSel.l;
+  if(sl.selectedIndex < 0){ sl.value = "all"; progSel.l = "all"; }
+  $("#progInfo").textContent = (state.uiLang==="ar" ? "الأسدس " : "Semestre ") + u.sem
+    + " · " + u.ch.length + (state.uiLang==="ar" ? " دروس" : " leçons") + " · " + hLabel(u.total, state.uiLang);
+}
+function stepFilled(s){ return STEP_FIELDS.some(function(fd){ return hasText(s[fd[0]]); }); }
+
+function applyProgram(){
+  var f = active(), units = progUnits(); if(!f || !units) return;
+  var u = units[+$("#progUnite").value]; if(!u) return;
+  var lv = $("#progLecon").value, ch = (lv==="all") ? null : u.ch[+lv];
+  var L = docLangOf(f), D = DOC[L];
+  var meta = $("#pFillMeta").checked, pre = $("#pFillPre").checked,
+      obj = $("#pFillObj").checked, mode = $("#progSteps").value;
+
+  var dirty = (meta && (hasText(f.unite) || hasText(f.titre) || hasText(f.duree)))
+           || (pre && hasText(f.prerequis)) || (obj && hasText(f.competences))
+           || (mode !== "keep" && f.steps.some(stepFilled));
+
+  function run(){
+    if(meta){
+      f.unite = u.t[L];
+      f.titre = ch ? ch.t[L] : u.t[L];
+      f.duree = hLabel(ch ? ch.h : u.total, L);
+    }
+    if(pre){ f.prerequis = (u.pre[L] || []).join("\n"); }
+    if(obj){
+      var lines = [D.objHeader];
+      if(ch) lines = lines.concat(ch.c.length ? ch.c : [ch.t[L]]);
+      else u.ch.forEach(function(c){ lines.push(c.t[L]+" ("+hLabel(c.h,L)+")"); });
+      f.competences = lines.join("\n");
+    }
+    if(mode !== "keep"){
+      var contents = ch ? ch.c.slice() : [];
+      var tpl = D.tpl, mid = tpl[1], steps = [];
+      if(mode === "std"){
+        tpl.forEach(function(t,i){
+          steps.push({ etape:t.e,
+            objectifs:(i===1 ? (contents.length ? contents.join("\n") : (ch ? ch.t[L] : "")) : ""),
+            competences:t.k, prof:t.p, eleve:t.v, moyens:t.m, evaluation:t.x });
+        });
+      }else if(mode === "content"){
+        var src = contents.length ? contents
+                : (ch ? [ch.t[L]] : u.ch.map(function(c){ return c.t[L]; }));
+        src.forEach(function(c,i){
+          steps.push({ etape:D.activite+" "+(i+1), objectifs:c, competences:mid.k,
+                       prof:mid.p, eleve:mid.v, moyens:mid.m, evaluation:mid.x });
+        });
+      }else{
+        u.ch.forEach(function(c){
+          steps.push({ etape:c.t[L]+" ("+hLabel(c.h,L)+")",
+                       objectifs:(c.c.length ? c.c.join("\n") : c.t[L]), competences:mid.k,
+                       prof:mid.p, eleve:mid.v, moyens:mid.m, evaluation:mid.x });
+        });
+      }
+      f.steps = steps; f.showEtape = true;
+    }
+    touch(); renderForm(); renderList(); toast(T("pDone"));
+  }
+  if(dirty) askConfirm(T("pOverwriteTitle"), T("pOverwriteText"), run); else run();
+}
+
+/* ---------- Banques de formulations ---------- */
+var STEP_BANK = { objectifs:"objectifs", competences:"competences", prof:"prof",
+                  eleve:"eleve", moyens:"moyens", evaluation:"evaluation" };
+
+function addBankBtn(label, key, getTa){
+  var b = el("button","btn sm bk","＋");
+  b.type = "button"; b.title = T("bank");
+  b.onclick = function(e){ e.preventDefault(); e.stopPropagation(); openBank(key, getTa()); };
+  label.classList.add("hasbk");
+  label.appendChild(b);
+}
+function openBank(key, ta){
+  if(!ta) return;
+  $("#mdBankTitle").textContent = T("bank") + " — " + T("b_"+key);
+  var list = $("#mdBankList"); list.innerHTML = "";
+  (((BANKS[key]||{})[state.uiLang]) || []).forEach(function(txt){
+    var lab = el("label"), cb = el("input");
+    cb.type = "checkbox"; cb.value = txt;
+    lab.appendChild(cb); lab.appendChild(el("span", null, txt));
+    list.appendChild(lab);
+  });
+  openModal("mdBank");
+  $("#mdBankOk").onclick = function(){
+    var sel = $$("#mdBankList input:checked").map(function(c){ return c.value; });
+    closeModal("mdBank");
+    if(!sel.length) return;
+    var cur = ta.value.replace(/\s+$/,"");
+    ta.value = (cur ? cur+"\n" : "") + sel.join("\n");
+    ta.dispatchEvent(new Event("input", { bubbles:true }));
+  };
 }
 
 /* Modification -> sauvegarde + aperçu (avec anti-rebond) */
@@ -838,12 +1496,12 @@ function makeSection(title, txt){
 
 function stepColumns(f){
   var cols = [];
-  if(f.showEtape) cols.push({ k:"etape", t:"cEtape", w:"9%", center:true });
-  cols.push({ k:"objectifs",  t:"cObjectifs",   w: f.showEtape?"13%":"15%" });
-  cols.push({ k:"competences",t:"cCompetences", w: f.showEtape?"12%":"14%" });
-  cols.push({ k:"prof",       t:"cProf",        w: f.showEtape?"21%":"22%" });
-  cols.push({ k:"eleve",      t:"cEleve",       w: f.showEtape?"21%":"22%" });
-  cols.push({ k:"moyens",     t:"cMoyens",      w: f.showEtape?"13%":"14%" });
+  if(f.showEtape) cols.push({ k:"etape", t:"cEtape", w:"12%", center:true });
+  cols.push({ k:"objectifs",  t:"cObjectifs",   w: f.showEtape?"14%":"15%" });
+  cols.push({ k:"competences",t:"cCompetences", w: f.showEtape?"11%":"14%" });
+  cols.push({ k:"prof",       t:"cProf",        w: f.showEtape?"20%":"22%" });
+  cols.push({ k:"eleve",      t:"cEleve",       w: f.showEtape?"20%":"22%" });
+  cols.push({ k:"moyens",     t:"cMoyens",      w: f.showEtape?"12%":"14%" });
   cols.push({ k:"evaluation", t:"cEval",        w: f.showEtape?"11%":"13%" });
   return cols;
 }
@@ -1047,9 +1705,15 @@ $$("[data-f]").forEach(function(inp){
     var f = active(); if(!f) return;
     f[k] = (inp.type==="checkbox") ? inp.checked : inp.value;
     if(k==="showEtape") renderSteps();
+    if(k==="niveau"){ progSel = { u:"0", l:"all" }; refreshProg(); }
     touch();
   });
 });
+
+/* Assistant « programme officiel » */
+$("#progUnite").onchange = function(){ progSel.u = this.value; progSel.l = "all"; refreshLecons(); };
+$("#progLecon").onchange = function(){ progSel.l = this.value; };
+$("#btnProgFill").onclick = applyProgram;
 
 /* Gestion des fiches */
 $("#btnNew").onclick = function(){
@@ -1176,6 +1840,10 @@ document.addEventListener("keydown", function(e){
 /* ============================================================
    8. DÉMARRAGE
    ============================================================ */
+$$("[data-bank]").forEach(function(ta){
+  addBankBtn(ta.parentNode, ta.getAttribute("data-bank"), function(){ return ta; });
+});
+
 (function init(){
   var had = load();
   if(!had || !state.fiches.length){
