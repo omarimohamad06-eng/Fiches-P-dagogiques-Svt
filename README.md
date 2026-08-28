@@ -9,6 +9,39 @@ et développée avec Claude (Anthropic). Son monogramme sert de logo dans l'en-t
 d'onglet (tracé vectoriel intégré, sans fichier externe). Elle est utilisable telle quelle par n'importe quel
 professeur : l'en-tête est vierge au départ et se renseigne en quelques clics.
 
+## Accès par code
+
+L'application s'ouvre sur un écran demandant un **nom d'utilisateur** et un **code d'accès**.
+Une fois le code accepté, l'accès est mémorisé dans le navigateur : la personne ne le retape
+plus sur le même appareil (bouton « Déconnexion » dans le pied de page pour l'oublier).
+
+> ⚠️ **Ce n'est pas une sécurité, c'est un filtre de partage.** Les codes sont écrits en clair
+> dans `index.html` : n'importe qui sachant afficher le code source d'une page peut les lire et
+> contourner l'écran. Cela suffit à éviter que le lien circule sans contrôle, rien de plus.
+> N'y mettez jamais un mot de passe que vous utilisez ailleurs.
+
+### Ajouter ou retirer un utilisateur
+
+Ouvrir `index.html` dans un éditeur de texte et chercher **`var ACCESS_USERS`** (tout en haut
+de la partie `<script>`) :
+
+```js
+var ACCESS_USERS = {
+  "omari":           "svt2026",
+  "collegue_ahmed":  "code123",
+  "collegue_fatima": "code456"
+};
+```
+
+- **Ajouter** : écrire une nouvelle ligne `"nom_utilisateur": "code",` — le nom en minuscules,
+  sans espace ni accent. Toutes les lignes se terminent par une virgule **sauf la dernière**.
+- **Retirer** : supprimer la ligne de la personne. Son accès mémorisé cesse aussi de
+  fonctionner à la prochaine ouverture, même si elle s'était déjà connectée.
+- **Changer un code** : remplacer le texte entre guillemets après les deux-points.
+
+Après modification, enregistrer le fichier (et le repousser sur GitHub si vous utilisez le lien
+en ligne) : le nouveau code est actif au prochain chargement.
+
 ## Utilisation
 
 1. Télécharger `index.html`.
@@ -102,6 +135,8 @@ modalités d'évaluation et amorces de situations de départ.
 - Pour une utilisation sur plusieurs postes, copier simplement le fichier `index.html`.
 - Aucune information personnelle n'est incluse dans le fichier : chaque professeur saisit son
   propre en-tête, qui n'est enregistré que dans son navigateur.
+- Les liens de contact (Instagram, e-mail) ouvrent l'application correspondante ; ils ne sont
+  jamais chargés par la page, qui reste entièrement autonome et fonctionnelle hors connexion.
 - Source du programme intégré : « Programmes des sections internationales du baccalauréat
   marocain — Option français — Discipline : Sciences de la Vie et de la Terre », Ministère de
   l'Éducation Nationale et de la Formation Professionnelle, 29-30 avril 2015. Les niveaux couverts

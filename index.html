@@ -96,6 +96,7 @@ body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
   font-size:var(--fs); line-height:1.45;
+  height:100vh; display:flex; flex-direction:column; overflow:hidden;
 }
 html[dir="rtl"] body{ font-family:"Segoe UI","Noto Naskh Arabic","Traditional Arabic",Tahoma,Arial,sans-serif; }
 button,input,select,textarea{font:inherit;color:inherit}
@@ -130,6 +131,55 @@ h1,h2,h3,h4{margin:0}
 .btn.sm{padding:4px 8px;font-size:12px;border-radius:6px}
 .btn.danger{color:var(--danger);border-color:var(--danger-b)}
 .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.topbar .contact{
+  display:inline-flex;align-items:center;gap:6px;color:#fff;text-decoration:none;
+  font-size:12px;opacity:.85;background:#ffffff14;border:1px solid #ffffff3d;
+  padding:5px 10px;border-radius:8px;transition:.15s
+}
+.topbar .contact:hover{opacity:1;background:#ffffff2b}
+.topbar .contact svg{width:14px;height:14px;flex:none}
+
+/* ---------- Pied de page du site ---------- */
+.sitefoot{
+  flex:0 0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:7px 14px;background:var(--panel-2);border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--muted)
+}
+.sitefoot .who{margin-inline-end:auto}
+.sitefoot b{color:var(--head);font-size:12px}
+.sitefoot a{
+  display:inline-flex;align-items:center;gap:6px;color:var(--ink);text-decoration:none;
+  border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:3px 11px;transition:.15s
+}
+.sitefoot a:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-l)}
+.sitefoot svg{width:14px;height:14px;flex:none}
+.sitefoot a span,.topbar .contact span{direction:ltr;unicode-bidi:isolate}
+.sitefoot .sess{display:inline-flex;align-items:center;gap:8px}
+
+/* ---------- Écran d'accès ---------- */
+#login{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:18px;
+  background:linear-gradient(160deg,var(--bar1),var(--bar2))}
+#login.on{display:grid}
+#login .card{
+  background:var(--panel);color:var(--ink);border-radius:14px;padding:22px 22px 18px;
+  width:min(400px,100%);box-shadow:0 24px 60px rgba(0,0,0,.35);text-align:center
+}
+#login .mark{width:62px;height:62px;margin:0 auto 10px;border-radius:14px;
+  background:var(--brand);display:grid;place-items:center;padding:12px 10px;color:#fff}
+#login .mark svg{width:100%;height:auto;display:block}
+#login h2{font-size:16px;color:var(--head);margin-bottom:2px}
+#login .lead{font-size:12.5px;color:var(--muted);margin:4px 0 16px}
+#login label{display:block;text-align:start;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:10px}
+#login input[type=text],#login input[type=password]{
+  width:100%;margin-top:3px;border:1px solid var(--line);border-radius:8px;
+  padding:9px 11px;background:var(--field);color:var(--ink);font-size:14px}
+#login input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(14,124,102,.16)}
+#login .btn{width:100%;justify-content:center;margin-top:6px;padding:10px}
+#login label.rem{display:flex;align-items:center;gap:8px;font-weight:500;color:var(--ink);font-size:12.5px;margin:2px 0 6px}
+#login label.rem input{width:16px;height:16px;accent-color:var(--brand)}
+#login .err{color:var(--danger);font-size:12.5px;min-height:17px;margin-top:8px;font-weight:600}
+#login .foot{font-size:11px;color:var(--muted);margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+#login .foot a{color:var(--head);text-decoration:none}
 .lang-switch{display:flex;background:#ffffff22;border:1px solid #ffffff55;border-radius:8px;overflow:hidden}
 .lang-switch button{background:transparent;border:0;color:#fff;padding:6px 12px;cursor:pointer;font-size:13px}
 .lang-switch button.on{background:var(--pill);color:var(--pill-ink);font-weight:700}
@@ -137,7 +187,7 @@ h1,h2,h3,h4{margin:0}
 /* ---------- Disposition ---------- */
 .layout{
   display:grid; grid-template-columns:250px minmax(340px,1fr) minmax(360px,1.05fr);
-  gap:12px; padding:12px; height:calc(100vh - 51px); overflow:hidden;
+  gap:12px; padding:12px; flex:1; min-height:0; overflow:hidden;
 }
 .pane{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
 .pane > header{
@@ -225,7 +275,9 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 @media (max-width:1080px){
   .layout{grid-template-columns:1fr;height:auto;overflow:visible}
   .pane{max-height:none}
-  body{overflow:auto}
+  body{height:auto;overflow:auto}
+  .topbar .contact{display:none}
+  .sitefoot{flex-wrap:wrap;justify-content:center;text-align:center}
 }
 
 /* ============================================================
@@ -314,7 +366,7 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 @page{ size:A4 landscape; margin:0; }
 @media print{
   html,body{background:#fff!important;height:auto!important;overflow:visible!important}
-  .topbar,#sidebar,#editor,.pane>header,.note,.modal,#toast,#previewTools{display:none!important}
+  .topbar,#sidebar,#editor,.pane>header,.note,.modal,#toast,#previewTools,.sitefoot,#login{display:none!important}
   .layout{display:block!important;padding:0!important;margin:0!important;height:auto!important;overflow:visible!important;gap:0!important}
   #previewPane{display:block!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;background:#fff!important}
   #previewScroll{display:block!important;overflow:visible!important;padding:0!important;background:#fff!important;height:auto!important}
@@ -338,6 +390,7 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
       <div class="sub" data-i18n="appSub">Fiches de préparation — Sciences de la Vie et de la Terre</div>
     </div>
   </div>
+  <a class="contact" href="mailto:omarimohamad06@gmail.com" title="omarimohamad06@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg><span>omarimohamad06@gmail.com</span></a>
   <div class="lang-switch">
     <button id="langFr" class="on">Français</button>
     <button id="langAr">العربية</button>
@@ -368,12 +421,6 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
       <button class="btn sm" id="btnExport" data-i18n="exportJson">Exporter</button>
       <button class="btn sm" id="btnImport" data-i18n="importJson">Importer</button>
       <input type="file" id="fileImport" accept="application/json,.json" hidden>
-    </div>
-    <div class="credit">
-      <span data-i18n="creditBy">Application conçue par</span>
-      <b data-i18n="creditName">Pr. Omari Mohammed</b><br>
-      <span data-i18n="creditSubj">professeur de Sciences de la Vie et de la Terre</span><br>
-      <em data-i18n="creditWith">Développée avec Claude (Anthropic)</em>
     </div>
   </section>
 
@@ -519,6 +566,42 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 
 </main>
 
+<footer class="sitefoot">
+  <div class="who">
+    <span data-i18n="creditBy">Application conçue par</span>
+    <b data-i18n="creditName">Pr. Omari Mohammed</b>
+    — <span data-i18n="creditSubj">professeur de Sciences de la Vie et de la Terre</span>
+    · <span data-i18n="creditWith">Développée avec Claude (Anthropic)</span>
+  </div>
+  <a href="https://www.instagram.com/mohammed_omari0" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.4" cy="6.6" r="1.25" fill="currentColor" stroke="none"/></svg><span>@mohammed_omari0</span></a>
+  <a href="mailto:omarimohamad06@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg><span>omarimohamad06@gmail.com</span></a>
+  <span class="sess" id="sessBox" hidden>
+    <span id="sessWho"></span>
+    <button class="btn sm" id="btnLogout" data-i18n="logout">Déconnexion</button>
+  </span>
+</footer>
+
+<!-- ============ Écran d'accès ============ -->
+<div id="login">
+  <div class="card">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 141.6 100" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M0.0 100.0 L7.8 100.0 L33.6 43.3 L59.5 100.0 L90.7 100.0 L74.7 64.9 L84.6 43.3 L110.4 100.0 L141.6 100.0 L96.3 0.0 L70.8 55.9 L45.4 0.0 Z M96.3 13.6 L132.7 94.6 L113.8 94.2 L86.8 34.2 Z M45.4 13.6 L81.8 94.6 L63.0 94.4 L35.9 34.2 Z"/></svg></div>
+    <h2 data-i18n="loginTitle">Accès à l'application</h2>
+    <div class="lead" data-i18n="loginLead">Saisissez le nom d'utilisateur et le code d'accès qui vous ont été communiqués.</div>
+    <form id="loginForm" autocomplete="on">
+      <label><span data-i18n="loginUser">Nom d'utilisateur</span>
+        <input type="text" id="loginUser" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+      <label><span data-i18n="loginCode">Code d'accès</span>
+        <input type="password" id="loginCode" autocomplete="current-password"></label>
+      <label class="rem"><input type="checkbox" id="loginRemember" checked>
+        <span data-i18n="loginRemember">Rester connecté sur cet appareil</span></label>
+      <button class="btn primary" type="submit"><span data-i18n="loginBtn">Entrer</span></button>
+    </form>
+    <div class="err" id="loginErr"></div>
+    <div class="foot"><span data-i18n="loginHelp">Besoin d'un code d'accès ?</span>
+      <a href="mailto:omarimohamad06@gmail.com">omarimohamad06@gmail.com</a></div>
+  </div>
+</div>
+
 <!-- ============ Boîtes de dialogue ============ -->
 <div class="modal" id="mdPrompt">
   <div class="box">
@@ -565,6 +648,22 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 
 <script>
 "use strict";
+/* ============================================================
+   0. ACCÈS — LISTE DES UTILISATEURS AUTORISÉS
+   ------------------------------------------------------------
+   Une ligne par personne :  "nom_utilisateur": "code",
+   Ajouter quelqu'un   -> ajouter une ligne (ne pas oublier la virgule)
+   Retirer quelqu'un   -> supprimer sa ligne
+   Le nom d'utilisateur s'écrit en minuscules, sans espace ni accent.
+   ⚠ Il s'agit d'un simple filtre de partage, pas d'une sécurité :
+   le code est visible dans le fichier par qui sait l'ouvrir.
+   ============================================================ */
+var ACCESS_USERS = {
+  "omari":           "svt2026",
+  "collegue_ahmed":  "code123",
+  "collegue_fatima": "code456"
+};
+
 /* ============================================================
    1. DONNÉES DE RÉFÉRENCE ET TRADUCTIONS
    ============================================================ */
@@ -622,6 +721,11 @@ var I18N = {
     printNote:"Impression : Ctrl+P → Destination « Enregistrer au format PDF », Format A4, Orientation Paysage, Marges « Aucune », cocher « Graphiques d'arrière-plan ».",
     cancel:"Annuler", ok:"Valider", confirm:"Confirmer", close:"Fermer", helpTitle:"Aide",
     theme_auto:"Thème : celui du système", theme_light:"Thème : clair", theme_dark:"Thème : sombre",
+    loginTitle:"Accès à l'application", loginLead:"Saisissez le nom d'utilisateur et le code d'accès qui vous ont été communiqués.",
+    loginUser:"Nom d'utilisateur", loginCode:"Code d'accès", loginRemember:"Rester connecté sur cet appareil",
+    loginBtn:"Entrer", loginBad:"Nom d'utilisateur ou code incorrect.", loginHelp:"Besoin d'un code d'accès ?",
+    sessAs:"Connecté :", logout:"Déconnexion", logoutTitle:"Se déconnecter ?",
+    logoutText:"Le code vous sera redemandé à la prochaine ouverture sur cet appareil. Vos fiches enregistrées ne sont pas supprimées.",
     searchPh:"Rechercher…", optional:"(facultatif)", dureePh:"2 h (2 séances)", listPh:"Une ligne par élément…",
     step:"Étape", up:"Monter", down:"Descendre", noFiches:"Aucune fiche. Cliquez sur « ＋ Nouvelle ».",
     untitled:"Fiche sans titre", newName:"Nom de la nouvelle fiche", renameTitle:"Renommer la fiche",
@@ -687,6 +791,11 @@ var I18N = {
     printNote:"الطباعة: Ctrl+P ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
     cancel:"إلغاء", ok:"موافق", confirm:"تأكيد", close:"إغلاق", helpTitle:"مساعدة",
     theme_auto:"المظهر: حسب النظام", theme_light:"المظهر: فاتح", theme_dark:"المظهر: داكن",
+    loginTitle:"الدخول إلى التطبيق", loginLead:"أدخل اسم المستخدم ورمز الدخول اللذين توصلت بهما.",
+    loginUser:"اسم المستخدم", loginCode:"رمز الدخول", loginRemember:"إبقاء الجلسة مفتوحة على هذا الجهاز",
+    loginBtn:"دخول", loginBad:"اسم المستخدم أو الرمز غير صحيح.", loginHelp:"هل تحتاج إلى رمز دخول؟",
+    sessAs:"متصل:", logout:"تسجيل الخروج", logoutTitle:"تسجيل الخروج؟",
+    logoutText:"سيُطلب منك الرمز عند الفتح القادم على هذا الجهاز. الجذاذات المحفوظة لا تُحذف.",
     searchPh:"بحث…", optional:"(اختياري)", dureePh:"ساعتان (حصتان)", listPh:"عنصر واحد في كل سطر…",
     step:"المرحلة", up:"أعلى", down:"أسفل", noFiches:"لا توجد جذاذات. اضغط «＋ جديدة».",
     untitled:"جذاذة بدون عنوان", newName:"اسم الجذاذة الجديدة", renameTitle:"إعادة تسمية الجذاذة",
@@ -2132,7 +2241,7 @@ function touch(){
   clearTimeout(saveTimer); saveTimer = setTimeout(save, 350);
   clearTimeout(previewTimer); previewTimer = setTimeout(function(){ renderDoc(); renderList(); }, 260);
 }
-function renderAll(){ applyTheme(); applyLang(); renderList(); renderForm(); renderDoc(); }
+function renderAll(){ applyTheme(); applyLang(); showSession(); renderList(); renderForm(); renderDoc(); }
 
 /* ============================================================
    5. CONSTRUCTION DU DOCUMENT (A4 paysage) + PAGINATION
@@ -2526,6 +2635,62 @@ function fitPreview(){
 }
 
 /* ============================================================
+   5 bis. ACCÈS (filtre de partage, voir la liste en tête de fichier)
+   ============================================================ */
+var LS_ACCESS = "jadadat_acces_v1";
+var sessionUser = null;
+
+function storedUser(){
+  try{
+    var v = JSON.parse(localStorage.getItem(LS_ACCESS) || "null");
+    if(v && v.user && ACCESS_USERS[v.user] != null) return v.user;   /* utilisateur retiré = accès révoqué */
+  }catch(e){}
+  return null;
+}
+function showSession(){
+  var box = $("#sessBox");
+  if(!sessionUser){ box.hidden = true; return; }
+  box.hidden = false;
+  $("#sessWho").textContent = T("sessAs") + " " + sessionUser;
+}
+function openApp(user, remember){
+  sessionUser = user;
+  if(remember){ try{ localStorage.setItem(LS_ACCESS, JSON.stringify({ user:user, at:Date.now() })); }catch(e){} }
+  $("#login").classList.remove("on");
+  showSession();
+  fitPreview();
+}
+function initAccess(){
+  var u = storedUser();
+  if(u){ openApp(u, false); return; }
+  $("#login").classList.add("on");
+  setTimeout(function(){ $("#loginUser").focus(); }, 60);
+}
+$("#loginForm").onsubmit = function(e){
+  e.preventDefault();
+  var u = ($("#loginUser").value || "").trim().toLowerCase();
+  var c = ($("#loginCode").value || "").trim();
+  if(ACCESS_USERS[u] != null && String(ACCESS_USERS[u]) === c){
+    $("#loginErr").textContent = "";
+    $("#loginCode").value = "";
+    openApp(u, $("#loginRemember").checked);
+  }else{
+    $("#loginErr").textContent = T("loginBad");
+    $("#loginCode").select();
+  }
+};
+$("#btnLogout").onclick = function(){
+  askConfirm(T("logoutTitle"), T("logoutText"), function(){
+    try{ localStorage.removeItem(LS_ACCESS); }catch(e){}
+    sessionUser = null;
+    showSession();
+    $("#loginUser").value = ""; $("#loginCode").value = ""; $("#loginErr").textContent = "";
+    $("#login").classList.add("on");
+    setTimeout(function(){ $("#loginUser").focus(); }, 60);
+  });
+};
+
+/* ============================================================
    6. BOÎTES DE DIALOGUE
    ============================================================ */
 function openModal(id){ $("#"+id).classList.add("on"); }
@@ -2730,6 +2895,7 @@ $$("[data-bank]").forEach(function(ta){
   if(!active() && state.fiches.length) state.activeId = state.fiches[0].id;
   renderAll();
   save();
+  initAccess();
 })();
 </script>
 </body>
