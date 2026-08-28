@@ -68,18 +68,24 @@ modalités d'évaluation et amorces de situations de départ.
 - **Identification** : niveau (TCS, 1BAC SE, 1BAC LSH, 2BAC PC, 2BAC SVT — ou niveau libre),
   matière, unité/module, titre du cours, durée, professeur, numéro de fiche, année scolaire
   (calculée automatiquement).
-- **Rubriques** : compétences et objectifs visés, prérequis, situation de départ /
-  situation-problème. Une ligne de saisie = une puce ; les rubriques vides ne sont pas imprimées.
-- **Tableau des étapes** : Objectifs · Compétences · Activité du professeur · Activité de
-  l'élève · Moyens et supports · Évaluation (+ colonne « Étape » facultative). Étapes
-  déplaçables, duplicables et supprimables.
+- **Rubriques** : « Pré acquis » et « Objectifs d'apprentissage » côte à côte, plus une
+  situation de départ facultative. Une ligne de saisie = un paragraphe ; les rubriques vides
+  ne sont pas imprimées.
+- **Tableau des axes** reprenant la mise en page de référence : **Axes · Objectifs ·
+  Activités (Professeur / Apprenant) · Support · Évaluation**, en-tête sur deux niveaux,
+  colonne « Compétences » disponible en option. Chaque axe reçoit une **couleur** et peut
+  être suivi d'une bande **« Le contenu de la section : … »** sur toute la largeur.
+  Axes déplaçables, duplicables et supprimables.
+- **Verbes d'action en gras** : le verbe en tête de ligne (Mettre, Connaître, Propose,
+  Décrit, يحدد, يقارن…) est mis en gras automatiquement à l'impression.
 - **Aperçu en direct** au format A4 paysage, avec zoom et ajustement automatique.
 - **Pagination automatique** : les étapes qui ne tiennent pas passent à la page suivante avec
   répétition des en-têtes de colonnes ; option de répétition de l'en-tête officiel.
 - **Remplissage de la page** : les lignes (ou les rubriques) sont étirées pour occuper toute la
   hauteur utile — pas de grands espaces vides en bas de page.
-- **Pied de page sur chaque page** : 3 colonnes *Niveau / Année scolaire / Pr : …* et
-  numérotation **« Page X / Y »**.
+- **Mise en page réglable** : en-tête officiel avec logo (optionnel), pied de page à
+  3 colonnes *Niveau / Année scolaire / Pr : …* avec numérotation **« Page X / Y »**, et
+  ligne de clôture en fin de fiche — chacun activable ou non.
 - **Plusieurs fiches** enregistrées localement (`localStorage`) : créer, dupliquer, renommer,
   supprimer, rechercher ; sauvegarde automatique à chaque modification (Ctrl+S force la
   sauvegarde).

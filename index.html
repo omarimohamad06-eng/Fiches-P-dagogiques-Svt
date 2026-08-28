@@ -126,6 +126,7 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 .step{border:1px solid var(--line);border-radius:9px;margin-bottom:10px;overflow:hidden;background:#fff}
 .step > .sh{display:flex;align-items:center;gap:6px;background:var(--brand-l);padding:5px 9px;border-bottom:1px solid var(--line)}
 .step > .sh .n{font-weight:700;color:var(--brand-d);font-size:12.5px;margin-inline-end:auto}
+.step > .sh .clr{border:1px solid var(--line);border-radius:6px;padding:2px 4px;font-size:12px;cursor:pointer}
 .step .sb{padding:9px;display:grid;gap:8px;grid-template-columns:1fr 1fr}
 @media (max-width:1200px){ .step .sb{grid-template-columns:1fr} }
 .step textarea{min-height:58px}
@@ -161,86 +162,85 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 
 /* ============================================================
    FEUILLE DE LA JADHADHA (document imprimable) — A4 PAYSAGE
+   Mise en page reprise du modèle de référence du professeur.
    ============================================================ */
 #paper .page{
-  width:297mm; height:210mm; padding:6mm 7mm; background:#fff; color:#000;
+  width:297mm; height:210mm; padding:8mm 9mm; background:#fff; color:#000;
   box-sizing:border-box; display:flex; flex-direction:column;
   box-shadow:0 4px 18px rgba(0,0,0,.28);
-  font-family:Calibri,"Segoe UI",Arial,sans-serif; font-size:10.5pt; line-height:1.28;
+  font-family:Carlito,Calibri,"Segoe UI",Arial,sans-serif; font-size:8pt; line-height:1.26;
   -webkit-print-color-adjust:exact; print-color-adjust:exact;
 }
 #paper .page[data-lang="ar"]{
   font-family:"Traditional Arabic","Noto Naskh Arabic",Amiri,"Segoe UI",Tahoma,Arial,sans-serif;
-  font-size:13.5pt; line-height:1.42;
+  font-size:11pt; line-height:1.45;
 }
 #paper .p-body{flex:1 1 auto;min-height:0;overflow:hidden;display:block;position:relative}
-#paper .p-foot{flex:0 0 auto;margin-top:2mm;border-top:1pt solid #14493d;padding-top:1.2mm}
-#paper .f3{display:flex;justify-content:space-between;gap:6mm;font-size:9pt;font-weight:600}
-#paper .page[data-lang="ar"] .f3{font-size:11.5pt}
+#paper .p-foot{flex:0 0 auto;margin-top:2mm;border-top:.8pt solid #7f7f7f;padding-top:1.2mm}
+#paper .f3{display:flex;justify-content:space-between;gap:6mm;font-size:8pt}
+#paper .page[data-lang="ar"] .f3{font-size:10.5pt}
 #paper .f3 > div{flex:1}
 #paper .f3 > div:nth-child(2){text-align:center}
 #paper .f3 > div:nth-child(3){text-align:end}
-#paper .fpage{text-align:center;font-size:8.5pt;color:#33484f;margin-top:.6mm;letter-spacing:.3px}
-#paper .page[data-lang="ar"] .fpage{font-size:10.5pt}
+#paper .fpage{text-align:center;font-size:7.5pt;color:#555;margin-top:.5mm}
+#paper .page[data-lang="ar"] .fpage{font-size:9.5pt}
 
-/* En-tête officiel */
-#paper .doc-head{display:flex;align-items:stretch;gap:4mm;border:.9pt solid #14493d;border-radius:1.6mm;padding:2mm 3mm;margin-bottom:2.2mm}
-#paper .doc-head .col{flex:1;display:flex;flex-direction:column;justify-content:center;gap:.4mm;font-size:9.5pt;font-weight:600}
-#paper .page[data-lang="ar"] .doc-head .col{font-size:12pt}
+/* Titre principal */
+#paper .doc-h1{text-align:center;font-weight:700;font-size:13pt;line-height:1.55;margin:0 0 4mm}
+#paper .page[data-lang="ar"] .doc-h1{font-size:15.5pt;line-height:1.6}
+
+/* Tableaux */
+#paper table{width:100%;border-collapse:collapse;table-layout:fixed}
+#paper table td, #paper table th{border:.6pt solid #000}
+
+#paper table.info{margin-bottom:4mm}
+#paper table.info td{padding:1.6mm 2.6mm;font-weight:700;font-size:9.5pt;vertical-align:middle}
+#paper .page[data-lang="ar"] table.info td{font-size:11.5pt}
+#paper table.info td.r{text-align:end}
+
+#paper table.duo{margin-bottom:4mm}
+#paper table.duo th{background:#D9D9D9;padding:1.5mm;font-size:10pt;font-weight:700;text-align:center}
+#paper .page[data-lang="ar"] table.duo th{font-size:12pt}
+#paper table.duo td{padding:2mm 2.8mm;font-size:8.5pt;vertical-align:top}
+#paper .page[data-lang="ar"] table.duo td{font-size:11pt}
+
+#paper table.axes th{background:#D9D9D9;padding:1.5mm;font-size:10pt;font-weight:700;text-align:center;vertical-align:middle}
+#paper .page[data-lang="ar"] table.grid th{font-size:12pt}
+#paper table.axes td{padding:1.7mm 2.1mm;font-size:8pt;vertical-align:top}
+#paper .page[data-lang="ar"] table.grid td{font-size:10.5pt}
+#paper table.axes td.axe{font-weight:700;font-size:9pt;vertical-align:middle}
+#paper .page[data-lang="ar"] table.grid td.axe{font-size:11pt}
+#paper table.axes td.ctr{text-align:center;vertical-align:middle}
+#paper table.axes tr.sect td{background:#F2F2F2;font-style:italic;padding:1.7mm 2.6mm}
+
+#paper p{margin:0 0 1.1mm}
+#paper p:last-child{margin-bottom:0}
+#paper ul{margin:0;padding-inline-start:4.6mm}
+#paper li{margin:.2mm 0}
+
+/* Rubrique libre (situation de départ) */
+#paper .sec{border:.6pt solid #000;margin-bottom:4mm}
+#paper .sec > .st{background:#D9D9D9;border-bottom:.6pt solid #000;padding:1.5mm;font-weight:700;font-size:10pt;text-align:center}
+#paper .page[data-lang="ar"] .sec > .st{font-size:12pt}
+#paper .sec > .sc{padding:2mm 2.8mm;font-size:8.5pt}
+#paper .page[data-lang="ar"] .sec > .sc{font-size:11pt}
+
+/* Ligne de clôture */
+#paper .endline{text-align:center;font-style:italic;font-size:8.5pt;margin-top:4mm}
+#paper .page[data-lang="ar"] .endline{font-size:11pt}
+#paper .cont{font-size:7.5pt;color:#555;font-style:italic;margin-bottom:1mm}
+#paper .page[data-lang="ar"] .cont{font-size:10pt}
+
+/* En-tête officiel (optionnel) */
+#paper .doc-head{display:flex;align-items:stretch;gap:4mm;border:.6pt solid #000;padding:2mm 3mm;margin-bottom:3mm}
+#paper .doc-head .col{flex:1;display:flex;flex-direction:column;justify-content:center;gap:.4mm;font-size:9pt;font-weight:600}
+#paper .page[data-lang="ar"] .doc-head .col{font-size:11pt}
 #paper .doc-head .col.mid{flex:0 0 auto;align-items:center;justify-content:center;text-align:center;max-width:78mm;gap:1mm}
 #paper .doc-head .col.end{text-align:end;align-items:flex-end}
 #paper .page[dir="rtl"] .doc-head .col.end{align-items:flex-start}
-#paper .doc-head .ministry{font-weight:700;font-size:9.5pt;color:#14493d;text-align:center}
-#paper .page[data-lang="ar"] .doc-head .ministry{font-size:12.5pt}
+#paper .doc-head .ministry{font-weight:700;text-align:center}
 #paper .doc-head img{max-height:16mm;max-width:34mm;object-fit:contain}
-#paper .doc-head .kv{color:#000}
-#paper .doc-head .kv b{color:#14493d}
-#paper .doc-head .kv.line{font-weight:700;color:#14493d}
-
-/* Bandeau titre */
-#paper .doc-title{
-  background:#e6f4f0;border:.9pt solid #14493d;border-radius:1.6mm;
-  padding:1.6mm 3mm;margin-bottom:2.2mm;display:flex;align-items:center;gap:4mm
-}
-#paper .doc-title .lbl{font-size:8.5pt;font-weight:700;color:#14493d;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
-#paper .page[data-lang="ar"] .doc-title .lbl{font-size:11pt;text-transform:none}
-#paper .doc-title .val{flex:1;text-align:center;font-size:14pt;font-weight:700;color:#0b2c25}
-#paper .page[data-lang="ar"] .doc-title .val{font-size:17pt}
-#paper .doc-title .num{font-size:9pt;font-weight:700;color:#14493d;white-space:nowrap}
-#paper .page[data-lang="ar"] .doc-title .num{font-size:11.5pt}
-
-/* Bandeau infos */
-#paper table.meta{width:100%;border-collapse:collapse;margin-bottom:2.2mm;table-layout:fixed}
-#paper table.meta td{border:.7pt solid #6d8a83;padding:1.1mm 2mm;vertical-align:middle}
-#paper table.meta td .k{font-size:8pt;font-weight:700;color:#14493d;display:block;letter-spacing:.2px}
-#paper .page[data-lang="ar"] table.meta td .k{font-size:10.5pt}
-#paper table.meta td .v{font-size:10.5pt}
-#paper .page[data-lang="ar"] table.meta td .v{font-size:13pt}
-
-/* Sections texte */
-#paper .sec{border:.7pt solid #6d8a83;border-radius:1.4mm;margin-bottom:2.2mm;overflow:hidden}
-#paper .sec > .st{background:#e6f4f0;border-bottom:.7pt solid #6d8a83;padding:.9mm 2.5mm;font-weight:700;font-size:10pt;color:#14493d}
-#paper .page[data-lang="ar"] .sec > .st{font-size:12.5pt}
-#paper .sec > .sc{padding:1.4mm 3mm}
-#paper .sec ul{margin:0;padding-inline-start:5mm}
-#paper .sec li{margin:.2mm 0}
-#paper .sec p{margin:.4mm 0}
-
-/* Tableau des étapes */
-#paper table.steps{width:100%;border-collapse:collapse;table-layout:fixed}
-#paper table.steps th{
-  background:#14493d;color:#fff;border:.7pt solid #14493d;padding:1.2mm 1.6mm;
-  font-size:9.5pt;font-weight:700;text-align:center
-}
-#paper .page[data-lang="ar"] table.steps th{font-size:12pt}
-#paper table.steps td{border:.7pt solid #6d8a83;padding:1.2mm 1.8mm;vertical-align:top;font-size:10pt}
-#paper .page[data-lang="ar"] table.steps td{font-size:12.5pt}
-#paper table.steps td.c{text-align:center;vertical-align:middle;font-weight:600}
-#paper table.steps ul{margin:0;padding-inline-start:4.4mm}
-#paper table.steps p{margin:0 0 .5mm}
-#paper table.steps tr:nth-child(even) td{background:#f6faf9}
-#paper .cont{font-size:8pt;color:#4a6a63;font-style:italic;margin-bottom:1mm}
-#paper .page[data-lang="ar"] .cont{font-size:10.5pt}
+#paper .doc-head .kv.line{font-weight:700}
 
 /* ---------- IMPRESSION ---------- */
 @page{ size:A4 landscape; margin:0; }
@@ -400,11 +400,22 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
       </fieldset>
 
       <fieldset>
+        <legend data-i18n="secLayout">Mise en page de la fiche</legend>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">
+          <label class="checkline"><input type="checkbox" data-f="showHead"><span data-i18n="optHead">En-tête officiel (logo, académie)</span></label>
+          <label class="checkline"><input type="checkbox" data-f="repeatHead"><span data-i18n="optRepeat">Répéter cet en-tête sur chaque page</span></label>
+          <label class="checkline"><input type="checkbox" data-f="showFoot"><span data-i18n="optFoot">Pied de page et numérotation</span></label>
+          <label class="checkline"><input type="checkbox" data-f="endLine"><span data-i18n="optEnd">Ligne de clôture en fin de fiche</span></label>
+          <label class="checkline"><input type="checkbox" data-f="stretch"><span data-i18n="stretchOn">Étirer les lignes pour remplir la page</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
         <legend data-i18n="secContent">Contenu pédagogique</legend>
-        <label class="field"><span data-i18n="fComp">Compétences et objectifs visés</span>
+        <label class="field"><span data-i18n="fComp">Objectifs d'apprentissage</span>
           <textarea data-f="competences" data-bank="objectifs" data-ph="listPh" placeholder="Une ligne par élément…"></textarea>
           <span class="hint" data-i18n="listHint">Une ligne = une puce. Une ligne vide = un saut de paragraphe.</span></label>
-        <label class="field" style="margin-top:9px"><span data-i18n="fPrereq">Prérequis (acquis antérieurs)</span>
+        <label class="field" style="margin-top:9px"><span data-i18n="fPrereq">Pré acquis</span>
           <textarea data-f="prerequis" data-bank="prerequis" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
         <label class="field" style="margin-top:9px"><span data-i18n="fSituation">Situation de départ / Situation-problème</span>
           <textarea data-f="situation" data-bank="situation" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
@@ -413,10 +424,8 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
       <fieldset>
         <legend data-i18n="secSteps">Étapes du cours</legend>
         <div class="rowbtns" style="margin-bottom:9px">
-          <button class="btn sm" id="btnAddStep">＋ <span data-i18n="addStep">Ajouter une étape</span></button>
-          <label class="checkline"><input type="checkbox" data-f="showEtape"><span data-i18n="colEtapeOn">Colonne « Étape »</span></label>
-          <label class="checkline"><input type="checkbox" data-f="stretch"><span data-i18n="stretchOn">Étirer les lignes pour remplir la page</span></label>
-          <label class="checkline"><input type="checkbox" data-f="repeatHead"><span data-i18n="repeatHeadOn">Répéter l'en-tête sur chaque page</span></label>
+          <button class="btn sm" id="btnAddStep">＋ <span data-i18n="addStep">Ajouter un axe</span></button>
+          <label class="checkline"><input type="checkbox" data-f="showComp"><span data-i18n="colCompOn">Colonne « Compétences »</span></label>
         </div>
         <div id="stepsEditor"></div>
       </fieldset>
@@ -517,9 +526,9 @@ var I18N = {
     removeLogo:"Retirer le logo", fillDefaults:"Valeurs par défaut", saveDefaults:"Mémoriser comme défaut",
     logoHint:"Le logo est enregistré localement (redimensionné automatiquement).",
     secProg:"Assistant « programme officiel »", pUnite:"Unité du programme", pLecon:"Leçon / Chapitre",
-    pAll:"— Toute l'unité —", pSteps:"Étapes à générer", pStepsKeep:"Ne pas modifier les étapes",
-    pStepsStd:"Squelette standard (4 phases)", pStepsContent:"Une étape par contenu du programme",
-    pStepsLesson:"Une étape par leçon de l'unité", pFillMeta:"Unité, titre et durée",
+    pAll:"— Toute l'unité —", pSteps:"Axes à générer", pStepsKeep:"Ne pas modifier le tableau",
+    pStepsStd:"Squelette standard (4 phases)", pStepsContent:"Un axe par contenu du programme",
+    pStepsLesson:"Un axe par leçon de l'unité", pFillMeta:"Unité, titre et durée",
     pFillPre:"Prérequis", pFillObj:"Objectifs (contenus du programme)", pFill:"Remplir la fiche",
     pNote:"Programme officiel de SVT — sections internationales, option français (MEN, avril 2015). Unités, leçons et contenus détaillés sont disponibles en français et en arabe : le remplissage suit la langue du document.",
     pNoProg:"Aucun programme enregistré pour ce niveau.",
@@ -527,16 +536,19 @@ var I18N = {
     pDone:"Fiche remplie depuis le programme officiel",
     bank:"Banque de formulations", bankInsert:"Insérer", bankHint:"Cochez les éléments à ajouter au champ.",
     b_objectifs:"Objectifs", b_competences:"Compétences", b_prof:"Activité du professeur",
-    b_eleve:"Activité de l'élève", b_moyens:"Moyens et supports", b_evaluation:"Évaluation",
+    b_eleve:"Activité de l'apprenant", b_moyens:"Support", b_evaluation:"Évaluation",
     b_situation:"Situation de départ", b_prerequis:"Prérequis",
     secMeta:"Identification de la fiche", fNiveau:"Niveau", fNiveauCustom:"Niveau personnalisé",
     fMatiere:"Matière", fUnite:"Unité / Module", fDuree:"Durée", fNum:"Fiche N°", fProf:"Professeur",
     fAnnee:"Année scolaire", fDocLang:"Langue du document", langAuto:"Suivre l'interface",
-    fTitre:"Titre du cours", secContent:"Contenu pédagogique", fComp:"Compétences et objectifs visés",
-    fPrereq:"Prérequis (acquis antérieurs)", fSituation:"Situation de départ / Situation-problème",
+    fTitre:"Titre du cours", secContent:"Contenu pédagogique", fComp:"Objectifs d'apprentissage",
+    fPrereq:"Pré acquis", fSituation:"Situation de départ / Situation-problème",
     listHint:"Une ligne = une puce. Une ligne vide = un saut de paragraphe.",
-    secSteps:"Étapes du cours", addStep:"Ajouter une étape", colEtapeOn:"Colonne « Étape »",
-    stretchOn:"Étirer les lignes pour remplir la page", repeatHeadOn:"Répéter l'en-tête sur chaque page",
+    secSteps:"Axes et activités du cours", addStep:"Ajouter un axe", colCompOn:"Colonne « Compétences »",
+    stretchOn:"Étirer les lignes pour remplir la page",
+    secLayout:"Mise en page de la fiche", optHead:"En-tête officiel (logo, académie)",
+    optRepeat:"Répéter cet en-tête sur chaque page", optFoot:"Pied de page et numérotation",
+    optEnd:"Ligne de clôture en fin de fiche", axe:"Axe", axeColor:"Couleur de l'axe",
     preview:"Aperçu (A4 paysage)", fit:"Ajuster",
     printNote:"Impression : Ctrl+P → Destination « Enregistrer au format PDF », Format A4, Orientation Paysage, Marges « Aucune », cocher « Graphiques d'arrière-plan ».",
     cancel:"Annuler", ok:"Valider", confirm:"Confirmer", close:"Fermer", helpTitle:"Aide",
@@ -546,12 +558,16 @@ var I18N = {
     delTitle:"Supprimer la fiche", delText:"Cette fiche sera définitivement supprimée de ce navigateur. Continuer ?",
     saved:"Enregistré", savedAt:"Enregistré à", copySuffix:"(copie)", imported:"fiche(s) importée(s)",
     importErr:"Fichier invalide.", quotaErr:"Espace de stockage saturé : allégez le logo ou supprimez des fiches.",
-    noStep:"Aucune étape. Cliquez sur « ＋ Ajouter une étape ».",
+    noStep:"Aucun axe. Cliquez sur « ＋ Ajouter un axe ».",
     help:["Toutes les fiches sont enregistrées automatiquement dans ce navigateur (localStorage) : aucune connexion internet n'est nécessaire.",
       "L'assistant « programme officiel » remplit l'unité, le titre, la durée, les prérequis, les objectifs et le tableau des étapes à partir du programme national de SVT : choisissez le niveau, l'unité puis la leçon.",
       "Le bouton ＋ placé à côté d'un champ ouvre une banque de formulations prêtes à l'emploi (activités du professeur et de l'élève, moyens, évaluation, situations de départ…).",
       "Pour obtenir un PDF : bouton « Imprimer / PDF » puis, dans la fenêtre du navigateur, choisir « Enregistrer au format PDF », format A4, orientation Paysage, marges « Aucune » et cocher « Graphiques d'arrière-plan ».",
       "La pagination est calculée automatiquement : les étapes qui ne tiennent pas sont reportées sur la page suivante avec le titre des colonnes répété.",
+      "La fiche imprimée suit le modèle : titre, tableau d'identification, « Pré acquis / Objectifs d'apprentissage », puis le tableau Axes · Objectifs · Activités (Professeur / Apprenant) · Support · Évaluation.",
+      "Chaque axe peut recevoir une couleur (menu à droite de son titre) et un « contenu de la section » qui s'imprime en bande grise sur toute la largeur, sous la ligne concernée.",
+      "Le verbe d'action en tête de ligne (Mettre, Connaître, Propose, Décrit…) est automatiquement mis en gras à l'impression.",
+      "Le bloc « Mise en page » permet d'ajouter l'en-tête officiel avec logo, de masquer le pied de page ou la ligne de clôture.",
       "L'option « Étirer les lignes » agrandit les lignes du tableau pour remplir la page et éviter les grands espaces vides.",
       "L'académie régionale et la direction provinciale se choisissent dans des listes couvrant les 12 AREF et leurs directions ; l'intitulé imprimé reste modifiable.",
       "Renseignez une fois votre en-tête (académie, direction, établissement, nom) puis cliquez sur « Mémoriser comme défaut » : toutes vos prochaines fiches en hériteront.",
@@ -583,16 +599,19 @@ var I18N = {
     pDone:"تم ملء الجذاذة انطلاقًا من المقرر الرسمي",
     bank:"بنك الصيغ الجاهزة", bankInsert:"إدراج", bankHint:"اختر العناصر المراد إضافتها إلى الحقل.",
     b_objectifs:"الأهداف", b_competences:"الكفايات", b_prof:"نشاط الأستاذ",
-    b_eleve:"نشاط المتعلم", b_moyens:"الوسائل والدعامات", b_evaluation:"التقويم",
+    b_eleve:"نشاط المتعلم", b_moyens:"الدعامات", b_evaluation:"التقويم",
     b_situation:"وضعية الانطلاق", b_prerequis:"المكتسبات السابقة",
     secMeta:"تعريف الجذاذة", fNiveau:"المستوى", fNiveauCustom:"مستوى مخصص",
     fMatiere:"المادة", fUnite:"الوحدة / المجزوءة", fDuree:"المدة الزمنية", fNum:"رقم الجذاذة", fProf:"الأستاذ",
     fAnnee:"السنة الدراسية", fDocLang:"لغة الوثيقة", langAuto:"حسب لغة الواجهة",
-    fTitre:"عنوان الدرس", secContent:"المحتوى التربوي", fComp:"الكفايات والأهداف المتوخاة",
-    fPrereq:"المكتسبات السابقة", fSituation:"وضعية الانطلاق / الوضعية المشكلة",
+    fTitre:"عنوان الدرس", secContent:"المحتوى التربوي", fComp:"أهداف التعلم",
+    fPrereq:"المكتسبات القبلية", fSituation:"وضعية الانطلاق / الوضعية المشكلة",
     listHint:"كل سطر يقابل نقطة في اللائحة. السطر الفارغ يفصل بين الفقرات.",
-    secSteps:"مراحل الدرس", addStep:"إضافة مرحلة", colEtapeOn:"عمود «المرحلة»",
-    stretchOn:"توسيع الصفوف لملء الصفحة", repeatHeadOn:"تكرار الترويسة في كل صفحة",
+    secSteps:"محاور الدرس وأنشطته", addStep:"إضافة محور", colCompOn:"عمود «الكفايات»",
+    stretchOn:"توسيع الصفوف لملء الصفحة",
+    secLayout:"إخراج الجذاذة", optHead:"الترويسة الرسمية (الشعار، الأكاديمية)",
+    optRepeat:"تكرار هذه الترويسة في كل صفحة", optFoot:"تذييل الصفحة والترقيم",
+    optEnd:"سطر ختامي في نهاية الجذاذة", axe:"المحور", axeColor:"لون المحور",
     preview:"معاينة (A4 أفقي)", fit:"ملاءمة",
     printNote:"الطباعة: Ctrl+P ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
     cancel:"إلغاء", ok:"موافق", confirm:"تأكيد", close:"إغلاق", helpTitle:"مساعدة",
@@ -602,12 +621,16 @@ var I18N = {
     delTitle:"حذف الجذاذة", delText:"سيتم حذف هذه الجذاذة نهائيًا من هذا المتصفح. هل تريد المتابعة؟",
     saved:"تم الحفظ", savedAt:"تم الحفظ على الساعة", copySuffix:"(نسخة)", imported:"جذاذة/جذاذات تم استيرادها",
     importErr:"ملف غير صالح.", quotaErr:"مساحة التخزين ممتلئة: قلّص حجم الشعار أو احذف بعض الجذاذات.",
-    noStep:"لا توجد مراحل. اضغط «＋ إضافة مرحلة».",
+    noStep:"لا توجد محاور. اضغط «＋ إضافة محور».",
     help:["تُحفظ جميع الجذاذات تلقائيًا داخل هذا المتصفح (localStorage) دون الحاجة إلى أي اتصال بالإنترنت.",
       "مساعد «المقرر الرسمي» يملأ الوحدة والعنوان والمدة والمكتسبات السابقة والأهداف وجدول المراحل انطلاقًا من المقرر الوطني لعلوم الحياة والأرض: اختر المستوى ثم الوحدة ثم الدرس.",
       "زر ＋ بجانب كل حقل يفتح بنكًا من الصيغ الجاهزة (أنشطة الأستاذ والمتعلم، الوسائل، التقويم، وضعيات الانطلاق…).",
       "للحصول على ملف PDF: اضغط «طباعة / PDF» ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
       "يتم ترقيم الصفحات تلقائيًا: المراحل التي لا تسع في الصفحة تُنقل إلى الصفحة الموالية مع تكرار عناوين الأعمدة.",
+      "تتبع الجذاذة المطبوعة النموذج التالي: العنوان، جدول التعريف، «المكتسبات القبلية / أهداف التعلم»، ثم جدول المحاور · الأهداف · الأنشطة (الأستاذ / المتعلم) · الدعامات · التقويم.",
+      "يمكن إسناد لون لكل محور (القائمة بجانب عنوانه) و«مضمون المقطع» الذي يُطبع في شريط رمادي على عرض الصفحة أسفل السطر المعني.",
+      "يُكتب فعل الأداء في بداية السطر بخط عريض تلقائيًا عند الطباعة.",
+      "يتيح إطار «إخراج الجذاذة» إضافة الترويسة الرسمية بالشعار، أو إخفاء التذييل أو السطر الختامي.",
       "خيار «توسيع الصفوف» يوسّع صفوف الجدول لملء الصفحة وتفادي الفراغات الكبيرة.",
       "تُختار الأكاديمية الجهوية والمديرية الإقليمية من لوائح تشمل الأكاديميات الاثنتي عشرة ومديرياتها، مع إمكانية تعديل الصيغة المطبوعة.",
       "املأ ترويسة مؤسستك مرة واحدة (الأكاديمية، المديرية، المؤسسة، الاسم) ثم اضغط «اعتمادها كقيم افتراضية» لتستفيد منها كل جذاذاتك اللاحقة.",
@@ -624,6 +647,11 @@ var DOC = {
     annee:"Année scolaire", prof:"Professeur", matiere:"Matière",
     niveau:"Niveau", unite:"Unité / Module", duree:"Durée", num:"Fiche N°",
     ficheLabel:"Fiche pédagogique", titre:"Titre du cours",
+    ficheNo:"Fiche Pédagogique N°", lEtab:"Établissement", lDir:"Direction",
+    preAcquis:"Pré acquis", objAppr:"Objectifs d'apprentissage",
+    cAxes:"Axes", cActivites:"Activités", cProfCol:"Professeur", cApprenant:"Apprenant", cSupport:"Support",
+    lUnite:"Unité",
+    sectLabel:"Le contenu de la section :",
     comp:"Compétences et objectifs visés", prereq:"Prérequis (acquis antérieurs)",
     situation:"Situation de départ / Situation-problème",
     cObjectifs:"Objectifs", cCompetences:"Compétences", cProf:"Activité du professeur",
@@ -632,7 +660,7 @@ var DOC = {
     seeds:["Mise en situation","Construction des apprentissages","Évaluation / Trace écrite"],
     objHeader:"L'apprenant doit être capable de :", activite:"Activité", lecon:"Leçon",
     tpl:[
-      {e:"Mise en situation",
+      {e:"Situation de départ de l'unité",
        p:"Présente la situation de départ et recueille les représentations des élèves.",
        v:"Exprime ses représentations et formule le problème scientifique.",
        k:"Compétence communicative : formuler un problème scientifique",
@@ -660,6 +688,11 @@ var DOC = {
     annee:"السنة الدراسية", prof:"الأستاذ", matiere:"المادة",
     niveau:"المستوى", unite:"الوحدة / المجزوءة", duree:"المدة الزمنية", num:"رقم الجذاذة",
     ficheLabel:"جذاذة تربوية", titre:"عنوان الدرس",
+    ficheNo:"جذاذة تربوية رقم", lEtab:"المؤسسة", lDir:"المديرية",
+    preAcquis:"المكتسبات القبلية", objAppr:"أهداف التعلم",
+    cAxes:"المحاور", cActivites:"الأنشطة", cProfCol:"الأستاذ", cApprenant:"المتعلم", cSupport:"الدعامات",
+    lUnite:"الوحدة",
+    sectLabel:"مضمون المقطع:",
     comp:"الكفايات والأهداف المتوخاة", prereq:"المكتسبات السابقة",
     situation:"وضعية الانطلاق / الوضعية المشكلة",
     cObjectifs:"الأهداف", cCompetences:"الكفايات", cProf:"نشاط الأستاذ",
@@ -668,7 +701,7 @@ var DOC = {
     seeds:["وضعية الانطلاق","بناء التعلمات","التقويم / الخلاصة"],
     objHeader:"أن يكون المتعلم قادرًا على:", activite:"نشاط", lecon:"الدرس",
     tpl:[
-      {e:"وضعية الانطلاق",
+      {e:"وضعية انطلاق الوحدة",
        p:"يقدم وضعية الانطلاق ويستقصي تمثلات المتعلمين.",
        v:"يعبر عن تمثلاته ويصوغ المشكل العلمي.",
        k:"كفاية تواصلية: صياغة مشكل علمي",
@@ -1666,32 +1699,15 @@ var pxPerMm = (function(){
   return v || 3.7795;
 })();
 
-/* Texte multi-lignes -> liste à puces ou paragraphes (sans innerHTML) */
-function textToNodes(parent, txt){
-  var lines = String(txt||"").replace(/\r/g,"").split("\n").map(function(s){ return s.trim(); });
-  var chunk=[];
-  function flush(){
-    if(!chunk.length) return;
-    if(chunk.length===1){ parent.appendChild(el("p",null,chunk[0])); }
-    else{
-      var ul=el("ul");
-      chunk.forEach(function(l){ ul.appendChild(el("li",null,l.replace(/^[-•*–]\s*/,""))); });
-      parent.appendChild(ul);
-    }
-    chunk=[];
-  }
-  lines.forEach(function(l){ if(l==="") flush(); else chunk.push(l); });
-  flush();
-}
-function hasText(v){ return String(v||"").trim()!==""; }
 
 /* ============================================================
    3. ÉTAT ET PERSISTANCE
    ============================================================ */
 var state = { version:1, uiLang:"fr", settings:{ logo:"", defaults:null }, fiches:[], activeId:null };
 
-function blankStep(etape){
-  return { etape:etape||"", objectifs:"", competences:"", prof:"", eleve:"", moyens:"", evaluation:"" };
+function blankStep(etape, couleur){
+  return { etape:etape||"", objectifs:"", competences:"", prof:"", eleve:"",
+           moyens:"", evaluation:"", contenu:"", couleur:couleur||"" };
 }
 function newFiche(){
   var lang = state.uiLang, d = (state.settings.defaults) || DEFAULTS[lang];
@@ -1704,8 +1720,9 @@ function newFiche(){
     matiere:d.matiere||"", unite:"", titre:"", duree:"", numero:"1",
     professeur:d.professeur||"", annee:schoolYear(), docLang:"auto",
     competences:"", prerequis:"", situation:"",
-    showEtape:false, stretch:true, repeatHead:false,
-    steps:[ blankStep(seeds[0]), blankStep(seeds[1]), blankStep(seeds[2]) ]
+    showComp:false, showHead:false, showFoot:true, endLine:true,
+    stretch:true, repeatHead:false,
+    steps:[ blankStep(seeds[0],"green"), blankStep(seeds[1],"blue"), blankStep(seeds[2],"yellow") ]
   };
 }
 function active(){
@@ -1797,9 +1814,11 @@ function renderForm(){
 }
 
 var STEP_FIELDS = [
-  ["etape","cEtape"], ["objectifs","cObjectifs"], ["competences","cCompetences"],
-  ["prof","cProf"], ["eleve","cEleve"], ["moyens","cMoyens"], ["evaluation","cEval"]
+  ["etape","cAxes"], ["objectifs","cObjectifs"], ["competences","cCompetences"],
+  ["prof","cProf"], ["eleve","cApprenant"], ["moyens","cSupport"],
+  ["evaluation","cEval"], ["contenu","sectLabel"]
 ];
+var WIDE_FIELDS = { etape:1, contenu:1 };
 
 function renderSteps(){
   var box = $("#stepsEditor"), f = active();
@@ -1810,7 +1829,14 @@ function renderSteps(){
   f.steps.forEach(function(st, i){
     var wrap = el("div","step");
     var h = el("div","sh");
-    h.appendChild(el("div","n", T("step")+" "+(i+1) + (hasText(st.etape) ? " — "+st.etape : "")));
+    h.appendChild(el("div","n", T("axe")+" "+(i+1) + (hasText(st.etape) ? " — "+st.etape : "")));
+    var sc = el("select","clr"); sc.title = T("axeColor");
+    [["","—"],["green","🟩"],["blue","🟦"],["yellow","🟨"],["pink","🟥"],["purple","🟪"],["grey","⬜"]]
+      .forEach(function(o){ var op = el("option", null, o[1]); op.value = o[0]; sc.appendChild(op); });
+    sc.value = st.couleur || "";
+    sc.style.background = AXE_COLORS[st.couleur||""] || "#fff";
+    sc.onchange = function(){ st.couleur = sc.value; sc.style.background = AXE_COLORS[sc.value] || "#fff"; touch(); };
+    h.appendChild(sc);
     [["↑","up",-1],["↓","down",1]].forEach(function(b){
       var btn = el("button","btn sm",b[0]); btn.title=T(b[1]);
       btn.onclick = function(){ moveStep(i,b[2]); };
@@ -1826,14 +1852,14 @@ function renderSteps(){
 
     var body = el("div","sb");
     STEP_FIELDS.forEach(function(fd){
-      if(fd[0]==="etape" && !f.showEtape) return;
+      if(fd[0]==="competences" && !f.showComp) return;
       var lab = el("label","field");
       lab.appendChild(el("span",null,DOC[L][fd[1]]));
       var ta = el("textarea"); ta.value = st[fd[0]]||"";
-      if(fd[0]==="etape"){ ta.style.minHeight="38px"; lab.style.gridColumn="1 / -1"; }
+      if(WIDE_FIELDS[fd[0]]){ ta.style.minHeight="42px"; lab.style.gridColumn="1 / -1"; }
       ta.oninput = function(){
         st[fd[0]] = ta.value; touch();
-        if(fd[0]==="etape"){ h.firstChild.textContent = T("step")+" "+(i+1)+(hasText(ta.value)?" — "+ta.value:""); }
+        if(fd[0]==="etape"){ h.firstChild.textContent = T("axe")+" "+(i+1)+(hasText(ta.value)?" — "+ta.value:""); }
       };
       lab.appendChild(ta);
       if(STEP_BANK[fd[0]]) addBankBtn(lab, STEP_BANK[fd[0]], function(){ return ta; });
@@ -1957,23 +1983,26 @@ function applyProgram(){
         tpl.forEach(function(t,i){
           steps.push({ etape:t.e,
             objectifs:(i===1 ? (contents.length ? contents.join("\n") : (ch ? ch.t[L] : "")) : ""),
-            competences:t.k, prof:t.p, eleve:t.v, moyens:t.m, evaluation:t.x });
+            competences:t.k, prof:t.p, eleve:t.v, moyens:t.m, evaluation:t.x,
+            contenu:"", couleur:AXE_CYCLE[i % AXE_CYCLE.length] });
         });
       }else if(mode === "content"){
         var src = contents.length ? contents
                 : (ch ? [ch.t[L]] : u.ch.map(function(c){ return c.t[L]; }));
         src.forEach(function(c,i){
-          steps.push({ etape:D.activite+" "+(i+1), objectifs:c, competences:mid.k,
-                       prof:mid.p, eleve:mid.v, moyens:mid.m, evaluation:mid.x });
+          steps.push({ etape:D.activite+" "+(i+1)+" : "+c, objectifs:"", competences:mid.k,
+                       prof:mid.p, eleve:mid.v, moyens:mid.m, evaluation:mid.x,
+                       contenu:"", couleur:AXE_CYCLE[i % AXE_CYCLE.length] });
         });
       }else{
-        u.ch.forEach(function(c){
+        u.ch.forEach(function(c,i){
           steps.push({ etape:c.t[L]+" ("+hLabel(c.h,L)+")",
                        objectifs:(contentsOf(c, L).join("\n") || c.t[L]), competences:mid.k,
-                       prof:mid.p, eleve:mid.v, moyens:mid.m, evaluation:mid.x });
+                       prof:mid.p, eleve:mid.v, moyens:mid.m, evaluation:mid.x,
+                       contenu:"", couleur:AXE_CYCLE[i % AXE_CYCLE.length] });
         });
       }
-      f.steps = steps; f.showEtape = true;
+      f.steps = steps;
     }
     touch(); renderForm(); renderList(); toast(T("pDone"));
   }
@@ -2023,14 +2052,65 @@ function renderAll(){ applyLang(); renderList(); renderForm(); renderDoc(); }
 
 /* ============================================================
    5. CONSTRUCTION DU DOCUMENT (A4 paysage) + PAGINATION
+   Mise en page conforme au modèle de référence :
+   titre · tableau d'identification · pré acquis / objectifs ·
+   tableau des axes avec bandes « contenu de la section ».
    ============================================================ */
-function kv(parent, label, value){
-  var d = el("div","kv");
-  var b = el("b", null, label+" : "); d.appendChild(b);
-  d.appendChild(document.createTextNode(value||"—"));
-  parent.appendChild(d);
-  return d;
+
+/* Couleurs des cellules « Axes » */
+var AXE_COLORS = { "":"", green:"#E2EFDA", blue:"#DCE6F1", yellow:"#FFF2CC",
+                   pink:"#F2DCDB", purple:"#E4DFEC", grey:"#F2F2F2" };
+var AXE_CYCLE = ["green","blue","yellow","pink","purple","grey"];
+
+/* Verbes mis en gras en tête de ligne, comme sur le modèle */
+var VERBS = (function(){
+  var l = ("mettre connaitre deduire comparer identifier decrire determiner expliquer analyser realiser "+
+  "formuler poser distinguer definir citer classer construire elaborer exploiter interpreter justifier "+
+  "observer manipuler rediger schematiser calculer comprendre conclure verifier etablir relever extraire "+
+  "proposer orienter donner faire guider animer distribuer presenter corriger assurer participer noter "+
+  "ecrire montrer illustrer appliquer resoudre evaluer synthetiser degager reperer relier traduire utiliser "+
+  "choisir mesurer tracer legender argumenter reinvestir mobiliser situer ordonner completer "+
+  "met propose oriente donne fait guide anime distribue presente corrige assure participe note ecrit "+
+  "decrit determine precise compare deduit calcule realise redige formule exprime confronte observe "+
+  "analyse schematise extrait identifie explique montre applique resout evalue complete remplit repond "+
+  "pose verifie relie utilise mesure trace choisit conclut comprend connait rappelle se s "+
+  "يحدد يقارن يصف يفسر يستنتج يحلل ينجز يصوغ يقترح يوزع يوجه ينظم يسير يصحح يقدم يلاحظ يشارك يحرر يعبر "+
+  "يطرح يستخرج يكتب يرسم يوظف يستعمل يميز يعرف يبرز يتعرف يحسب يتحقق يجيب يشرح يطبق يستثمر يركب يصنف").split(/\s+/);
+  var set = {};
+  l.forEach(function(w){ if(w) set[w] = 1; });
+  return set;
+})();
+function normWord(w){
+  return String(w||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+         .replace(/[^a-z؀-ۿ]/g,"");
 }
+function verbLine(parent, line){
+  var lead = "", rest = String(line);
+  var m = rest.match(/^([-–—•*]+\s*)/);
+  if(m){ lead = "– "; rest = rest.slice(m[0].length); }
+  if(lead) parent.appendChild(document.createTextNode(lead));
+  var parts = rest.split(/\s+/), first = normWord(parts[0]);
+  if(VERBS[first]){
+    var take = (first === "se" || first === "s") && parts[1] ? 2 : 1;
+    parent.appendChild(el("b", null, parts.slice(0, take).join(" ")));
+    var tail = parts.slice(take).join(" ");
+    if(tail) parent.appendChild(document.createTextNode(" " + tail));
+  }else{
+    parent.appendChild(document.createTextNode(rest));
+  }
+}
+/* Un paragraphe par ligne saisie (bold = mise en gras du verbe d'action) */
+function textToNodes(parent, txt, bold){
+  String(txt||"").replace(/\r/g,"").split("\n").forEach(function(line){
+    var t = line.trim();
+    if(!t) return;
+    var p = el("p");
+    if(bold) verbLine(p, t); else p.textContent = t;
+    parent.appendChild(p);
+  });
+}
+function hasText(v){ return String(v||"").trim() !== ""; }
+
 function levelShort(f){
   if(hasText(f.niveauLibre)) return f.niveauLibre.trim();
   return f.niveau || "—";
@@ -2038,12 +2118,26 @@ function levelShort(f){
 function levelLabel(f, L){
   if(hasText(f.niveauLibre)) return f.niveauLibre.trim();
   for(var i=0;i<LEVELS.length;i++) if(LEVELS[i].code===f.niveau) return LEVELS[i][L];
-  return f.niveau||"—";
+  return f.niveau || "—";
 }
+/* « Direction Provinciale de Tinghir » -> « Tinghir » pour le bandeau compact */
+function shortDir(v, L){
+  var t = String(v||"").trim();
+  if(L === "ar") return t.replace(/^المديرية\s+الإقليمية\s*ب?/, "");
+  return t.replace(/^Direction\s+Provinciale\s+(de\s+l['’]|de\s+la\s+|de\s+|du\s+|d['’])?/i, "");
+}
+function vOr(v){ return hasText(v) ? String(v).trim() : "—"; }
 
+/* ---------- Blocs du document ---------- */
+function kv(parent, label, value){
+  var d = el("div","kv");
+  d.appendChild(el("b", null, label+" : "));
+  d.appendChild(document.createTextNode(value || "—"));
+  parent.appendChild(d);
+  return d;
+}
 function makeHead(f, L, compact){
-  var D = DOC[L];
-  var h = el("div","doc-head");
+  var D = DOC[L], h = el("div","doc-head");
   var c1 = el("div","col");
   [f.academie, f.direction, f.etablissement].forEach(function(v){
     if(hasText(v)) c1.appendChild(el("div","kv line", v));
@@ -2051,7 +2145,7 @@ function makeHead(f, L, compact){
   var c2 = el("div","col mid");
   if(hasText(f.ministere)) c2.appendChild(el("div","ministry", f.ministere));
   if(state.settings.logo && !compact){
-    var img = el("img"); img.src = state.settings.logo; img.alt=""; c2.appendChild(img);
+    var img = el("img"); img.src = state.settings.logo; img.alt = ""; c2.appendChild(img);
   }
   var c3 = el("div","col end");
   kv(c3, D.annee, f.annee);
@@ -2060,80 +2154,128 @@ function makeHead(f, L, compact){
   h.appendChild(c1); h.appendChild(c2); h.appendChild(c3);
   return h;
 }
-
-function makeTitleBand(f, L){
-  var D = DOC[L];
-  var t = el("div","doc-title");
-  t.appendChild(el("div","lbl", D.ficheLabel));
-  t.appendChild(el("div","val", hasText(f.titre) ? f.titre : "…"));
-  t.appendChild(el("div","num", D.num+" : "+(f.numero||"—")));
+function makeTitle(f, L){
+  var D = DOC[L], t = el("div","doc-h1");
+  var titre = hasText(f.titre) ? f.titre.trim() : "…";
+  var sep = /[°:]$/.test(D.ficheNo) ? "" : " ";
+  t.textContent = hasText(f.numero) ? (D.ficheNo + sep + f.numero.trim() + " : " + titre) : titre;
   return t;
 }
-
-function makeMeta(f, L){
-  var D = DOC[L];
-  var cells = [
-    [D.niveau, levelLabel(f,L), "22%"],
-    [D.matiere, f.matiere, "22%"],
-    [D.unite, f.unite, "30%"],
-    [D.duree, f.duree, "14%"],
-    [D.num, f.numero, "12%"]
+function makeInfo(f, L){
+  var D = DOC[L], tb = el("table","info"), body = el("tbody");
+  var rows = [
+    [D.lEtab + " : " + vOr(f.etablissement), D.niveau + " : " + levelLabel(f, L), vOr(f.professeur)],
+    [D.lDir + " : " + vOr(shortDir(f.direction, L)), D.lUnite + " : " + vOr(f.unite), D.duree + " : " + vOr(f.duree)]
   ];
-  var tb = el("table","meta"), tr = el("tr");
-  cells.forEach(function(c){
-    var td = el("td"); td.style.width = c[2];
-    td.appendChild(el("span","k", c[0]));
-    td.appendChild(el("span","v", hasText(c[1]) ? c[1] : "—"));
-    tr.appendChild(td);
+  rows.forEach(function(r){
+    var tr = el("tr");
+    r.forEach(function(txt,i){
+      var td = el("td", i===2 ? "r" : null, txt);
+      td.style.width = "33.33%";
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
   });
-  var tbody = el("tbody"); tbody.appendChild(tr); tb.appendChild(tbody);
+  tb.appendChild(body);
   return tb;
 }
-
+function makeDuo(f, L){
+  var D = DOC[L];
+  if(!hasText(f.prerequis) && !hasText(f.competences)) return null;
+  var tb = el("table","duo");
+  var thead = el("thead"), htr = el("tr");
+  [D.preAcquis, D.objAppr].forEach(function(t){
+    var th = el("th", null, t); th.style.width = "50%"; htr.appendChild(th);
+  });
+  thead.appendChild(htr); tb.appendChild(thead);
+  var body = el("tbody"), tr = el("tr");
+  var td1 = el("td"); textToNodes(td1, f.prerequis, false);
+  var td2 = el("td"); textToNodes(td2, f.competences, true);
+  tr.appendChild(td1); tr.appendChild(td2);
+  body.appendChild(tr); tb.appendChild(body);
+  return tb;
+}
 function makeSection(title, txt){
   var s = el("div","sec");
   s.appendChild(el("div","st", title));
   var c = el("div","sc");
-  textToNodes(c, txt);
+  textToNodes(c, txt, false);
   s.appendChild(c);
   return s;
 }
-
 function stepColumns(f){
-  var cols = [];
-  if(f.showEtape) cols.push({ k:"etape", t:"cEtape", w:"12%", center:true });
-  cols.push({ k:"objectifs",  t:"cObjectifs",   w: f.showEtape?"14%":"15%" });
-  cols.push({ k:"competences",t:"cCompetences", w: f.showEtape?"11%":"14%" });
-  cols.push({ k:"prof",       t:"cProf",        w: f.showEtape?"20%":"22%" });
-  cols.push({ k:"eleve",      t:"cEleve",       w: f.showEtape?"20%":"22%" });
-  cols.push({ k:"moyens",     t:"cMoyens",      w: f.showEtape?"12%":"14%" });
-  cols.push({ k:"evaluation", t:"cEval",        w: f.showEtape?"11%":"13%" });
-  return cols;
+  var withComp = !!f.showComp;
+  return withComp
+    ? [{k:"etape",t:"cAxes",w:"12%"},{k:"objectifs",t:"cObjectifs",w:"15%"},
+       {k:"competences",t:"cCompetences",w:"11%"},{k:"prof",t:"cProf",w:"19.5%"},
+       {k:"eleve",t:"cApprenant",w:"19.5%"},{k:"moyens",t:"cSupport",w:"13%"},
+       {k:"evaluation",t:"cEval",w:"10%"}]
+    : [{k:"etape",t:"cAxes",w:"12.9%"},{k:"objectifs",t:"cObjectifs",w:"17.4%"},
+       {k:"prof",t:"cProf",w:"21.3%"},{k:"eleve",t:"cApprenant",w:"21.3%"},
+       {k:"moyens",t:"cSupport",w:"14.2%"},{k:"evaluation",t:"cEval",w:"12.9%"}];
 }
 function makeStepTable(f, L){
-  var cols = stepColumns(f), tb = el("table","steps");
-  var thead = el("thead"), tr = el("tr");
-  cols.forEach(function(c){ var th = el("th", null, DOC[L][c.t]); th.style.width = c.w; tr.appendChild(th); });
-  thead.appendChild(tr); tb.appendChild(thead); tb.appendChild(el("tbody"));
+  var D = DOC[L], cols = stepColumns(f), tb = el("table","axes");
+  var cg = el("colgroup");
+  cols.forEach(function(c){ var co = el("col"); co.style.width = c.w; cg.appendChild(co); });
+  tb.appendChild(cg);
+  var thead = el("thead"), r1 = el("tr"), r2 = el("tr");
+  cols.forEach(function(c){
+    if(c.k === "prof"){
+      var act = el("th", null, D.cActivites); act.colSpan = 2; r1.appendChild(act);
+      r2.appendChild(el("th", null, D.cProfCol));
+      return;
+    }
+    if(c.k === "eleve"){ r2.appendChild(el("th", null, D.cApprenant)); return; }
+    var th = el("th", null, D[c.t]); th.rowSpan = 2; r1.appendChild(th);
+  });
+  thead.appendChild(r1); thead.appendChild(r2);
+  tb.appendChild(thead); tb.appendChild(el("tbody"));
   return tb;
 }
-function makeStepRow(f, st){
+var BOLD_COLS = { objectifs:1, prof:1, eleve:1 };
+function makeStepRow(f, st, L){
   var cols = stepColumns(f), tr = el("tr");
   cols.forEach(function(c){
-    var td = el("td"); if(c.center) td.className = "c";
-    textToNodes(td, st[c.k]);
+    var td = el("td");
+    if(c.k === "etape"){
+      td.className = "axe";
+      var bg = AXE_COLORS[st.couleur || ""];
+      if(bg) td.style.background = bg;
+      textToNodes(td, st.etape, false);
+    }else if(c.k === "evaluation"){
+      td.className = "ctr";
+      textToNodes(td, st.evaluation, false);
+    }else{
+      textToNodes(td, st[c.k], !!BOLD_COLS[c.k]);
+    }
     tr.appendChild(td);
   });
   return tr;
 }
-
+function makeSectRow(f, st, L){
+  var tr = el("tr","sect"), td = el("td");
+  td.colSpan = stepColumns(f).length;
+  var p = el("p");
+  p.appendChild(el("b", null, DOC[L].sectLabel + " "));
+  p.appendChild(document.createTextNode(String(st.contenu||"").trim()));
+  td.appendChild(p);
+  tr.appendChild(td);
+  return tr;
+}
+function makeEndLine(f, L){
+  var parts = [f.professeur, f.etablissement, f.direction, levelShort(f)]
+              .filter(function(v){ return hasText(v); });
+  if(!parts.length) return null;
+  return el("div","endline", parts.join("  –  "));
+}
 function makeFoot(f, L){
   var D = DOC[L], foot = el("div","p-foot"), row = el("div","f3");
   row.appendChild(el("div", null, D.niveau+" : "+levelShort(f)));
   row.appendChild(el("div", null, D.annee+" : "+(f.annee||"—")));
   row.appendChild(el("div", null, hasText(f.professeur) ? f.professeur : "—"));
   foot.appendChild(row);
-  foot.appendChild(el("div","fpage","\u00A0"));   /* réserve la hauteur dès la pagination */
+  foot.appendChild(el("div","fpage"," "));   /* réserve la hauteur dès la pagination */
   return foot;
 }
 
@@ -2147,7 +2289,6 @@ function contentHeight(body){
   }
   return h;
 }
-
 /* Répartit l'espace libre d'une page sur une liste d'éléments (ajustement itératif :
    les bordures et arrondis de rendu décalent légèrement le calcul). */
 function fillPage(body, targets, get, set){
@@ -2179,15 +2320,17 @@ function renderDoc(){
     pg.dir = dir; pg.setAttribute("data-lang", L);
     var body = el("div","p-body");
     pg.appendChild(body);
-    pg.appendChild(makeFoot(f, L));
+    if(f.showFoot !== false) pg.appendChild(makeFoot(f, L));
     paper.appendChild(pg);
     cur = { pg:pg, body:body, n:0 };
     pages.push(cur);
-    if(first || f.repeatHead){ body.appendChild(makeHead(f, L, !first)); }
+    if(f.showHead && (first || f.repeatHead)) body.appendChild(makeHead(f, L, !first));
+    if(first) body.appendChild(makeTitle(f, L));
     return cur;
   }
   function overflows(){ return cur.body.scrollHeight > cur.body.clientHeight + 1; }
   function push(node){
+    if(!node) return;
     cur.body.appendChild(node); cur.n++;
     if(overflows()){
       if(cur.n === 1) return;              /* bloc plus haut qu'une page : on le garde */
@@ -2198,57 +2341,83 @@ function renderDoc(){
   }
 
   newPage(true);
-  push(makeTitleBand(f, L));
-  push(makeMeta(f, L));
-  if(hasText(f.competences)) push(makeSection(D.comp, f.competences));
-  if(hasText(f.prerequis))   push(makeSection(D.prereq, f.prerequis));
-  if(hasText(f.situation))   push(makeSection(D.situation, f.situation));
+  push(makeInfo(f, L));
+  push(makeDuo(f, L));
+  if(hasText(f.situation)) push(makeSection(D.situation, f.situation));
 
   var steps = f.steps.filter(function(s){
     return STEP_FIELDS.some(function(fd){ return hasText(s[fd[0]]); });
   });
   if(!steps.length && f.steps.length) steps = f.steps;   /* tableau vide : squelette imprimable */
 
+  var tbl = null, tbody = null, lastGroup = null;
+  function newTableOnNextPage(){
+    newPage(false);
+    cur.body.appendChild(el("div","cont", D.cont)); cur.n++;
+    tbl = makeStepTable(f, L);
+    cur.body.appendChild(tbl); cur.n++;
+    tbody = tbl.tBodies[0];
+  }
   if(steps.length){
-    var tbl = makeStepTable(f, L);
+    tbl = makeStepTable(f, L);
     push(tbl);
-    var tbody = tbl.tBodies[0];
+    tbody = tbl.tBodies[0];
     steps.forEach(function(st){
-      var tr = makeStepRow(f, st);
-      tbody.appendChild(tr);
+      var group = [makeStepRow(f, st, L)];
+      if(hasText(st.contenu)) group.push(makeSectRow(f, st, L));
+      group.forEach(function(r){ tbody.appendChild(r); });
       if(overflows()){
-        tbody.removeChild(tr);
+        group.forEach(function(r){ tbody.removeChild(r); });
         if(!tbody.rows.length && tbl.parentNode === cur.body){ cur.body.removeChild(tbl); cur.n--; }
-        newPage(false);
-        cur.body.appendChild(el("div","cont", D.cont)); cur.n++;
-        tbl = makeStepTable(f, L);
-        cur.body.appendChild(tbl); cur.n++;
-        tbody = tbl.tBodies[0];
-        tbody.appendChild(tr);
+        newTableOnNextPage();
+        group.forEach(function(r){ tbody.appendChild(r); });
       }
+      lastGroup = group;
     });
     /* Page finale vide (dernière ligne déplacée) : on la retire */
-    if(cur.body.querySelector("table.steps") && !cur.body.querySelector("table.steps tbody tr")){
+    if(cur.body.querySelector("table.axes") && !cur.body.querySelector("table.axes tbody tr")){
       paper.removeChild(cur.pg); pages.pop(); cur = pages[pages.length-1];
+    }
+  }
+  if(f.endLine !== false){
+    var endNode = makeEndLine(f, L);
+    if(endNode){
+      cur.body.appendChild(endNode); cur.n++;
+      if(overflows()){
+        cur.body.removeChild(endNode); cur.n--;
+        /* éviter une dernière page ne contenant que la ligne de clôture :
+           on y emmène aussi le dernier groupe de lignes du tableau */
+        if(tbody && lastGroup && tbody.rows.length > lastGroup.length){
+          lastGroup.forEach(function(r){ tbody.removeChild(r); });
+          newTableOnNextPage();
+          lastGroup.forEach(function(r){ tbody.appendChild(r); });
+        }else{
+          newPage(false);
+        }
+        cur.body.appendChild(endNode); cur.n++;
+      }
     }
   }
 
   /* Numérotation « Page X / Y » */
-  pages.forEach(function(p,i){
-    $(".fpage", p.pg).textContent = D.page+" "+(i+1)+" "+D.of+" "+pages.length;
-  });
+  if(f.showFoot !== false){
+    pages.forEach(function(p,i){
+      $(".fpage", p.pg).textContent = D.page+" "+(i+1)+" "+D.of+" "+pages.length;
+    });
+  }
 
   /* Remplissage : on étire le contenu pour occuper toute la hauteur de la page */
   if(f.stretch){
     pages.forEach(function(p){
-      var rows = $$("table.steps tbody tr", p.body);
+      var rows = $$("table.axes tbody tr", p.body).filter(function(tr){
+        return !tr.classList.contains("sect");
+      });
       if(rows.length){
         fillPage(p.body, rows,
           function(tr){ return tr.offsetHeight; },
           function(tr,v){ tr.style.height = v + "px"; });
       }else{
-        /* page sans tableau : on répartit l'espace sur les rubriques */
-        var secs = $$(".sec > .sc", p.body);
+        var secs = $$(".sec > .sc, table.duo td", p.body);
         if(secs.length) fillPage(p.body, secs,
           function(sc){ return sc.offsetHeight; },
           function(sc,v){ sc.style.height = v + "px"; });
@@ -2309,7 +2478,7 @@ $$("[data-f]").forEach(function(inp){
   inp.addEventListener(ev, function(){
     var f = active(); if(!f) return;
     f[k] = (inp.type==="checkbox") ? inp.checked : inp.value;
-    if(k==="showEtape") renderSteps();
+    if(k==="showComp") renderSteps();
     if(k==="niveau"){ progSel = { u:"0", l:"all" }; refreshProg(); }
     if(k==="docLang" && f.aref >= 0){          /* réécrit les intitulés dans la langue du document */
       f.academie = arefLabel(f.aref, docLangOf(f));
@@ -2364,7 +2533,7 @@ $("#searchBox").oninput = renderList;
 /* Étapes */
 $("#btnAddStep").onclick = function(){
   var f = active(); if(!f) return;
-  f.steps.push(blankStep("")); touch(); renderSteps();
+  f.steps.push(blankStep("", AXE_CYCLE[f.steps.length % AXE_CYCLE.length])); touch(); renderSteps();
   var box = $("#stepsEditor"); box.lastChild.scrollIntoView({ block:"nearest" });
 };
 
