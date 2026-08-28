@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>جذاذات SVT — Générateur de fiches pédagogiques</title>
+<style>
+/* ============================================================
+   Générateur de جذاذات (fiches pédagogiques) — SVT
+   Application autonome : un seul fichier, 100% hors-ligne.
+   ============================================================ */
+:root{
+  --bg:#eef2f4;
+  --panel:#ffffff;
+  --ink:#12232a;
+  --muted:#5d7480;
+  --line:#d7e0e4;
+  --brand:#0e7c66;
+  --brand-d:#0a5f4e;
+  --brand-l:#e6f4f0;
+  --accent:#b4541e;
+  --danger:#b3261e;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(16,40,50,.10), 0 6px 18px rgba(16,40,50,.06);
+  --fs:14px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:var(--fs); line-height:1.45;
+}
+html[dir="rtl"] body{ font-family:"Segoe UI","Noto Naskh Arabic","Traditional Arabic",Tahoma,Arial,sans-serif; }
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0}
+
+/* ---------- Barre supérieure ---------- */
+.topbar{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  background:linear-gradient(180deg,var(--brand),var(--brand-d));
+  color:#fff; padding:8px 14px; box-shadow:var(--shadow); position:relative; z-index:5;
+}
+.topbar .brand{display:flex;align-items:center;gap:10px;margin-inline-end:auto}
+.topbar .logo-mark{
+  width:34px;height:34px;border-radius:9px;background:#ffffff22;border:1px solid #ffffff55;
+  display:grid;place-items:center;font-size:18px
+}
+.topbar h1{font-size:15px;font-weight:650;letter-spacing:.2px}
+.topbar .sub{font-size:11.5px;opacity:.85}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;color:var(--ink);border:1px solid var(--line);
+  padding:7px 11px;border-radius:8px;cursor:pointer;white-space:nowrap;
+  transition:.15s ease; font-size:13px;
+}
+.btn:hover{background:#f5f8f9;transform:translateY(-1px)}
+.btn:active{transform:none}
+.btn.ghost{background:#ffffff1f;color:#fff;border-color:#ffffff55}
+.btn.ghost:hover{background:#ffffff33}
+.btn.primary{background:var(--accent);color:#fff;border-color:transparent;font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{padding:4px 8px;font-size:12px;border-radius:6px}
+.btn.danger{color:var(--danger);border-color:#e7c6c3}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.lang-switch{display:flex;background:#ffffff22;border:1px solid #ffffff55;border-radius:8px;overflow:hidden}
+.lang-switch button{background:transparent;border:0;color:#fff;padding:6px 12px;cursor:pointer;font-size:13px}
+.lang-switch button.on{background:#fff;color:var(--brand-d);font-weight:700}
+
+/* ---------- Disposition ---------- */
+.layout{
+  display:grid; grid-template-columns:250px minmax(340px,1fr) minmax(360px,1.05fr);
+  gap:12px; padding:12px; height:calc(100vh - 51px); overflow:hidden;
+}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.pane > header{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:9px 12px;border-bottom:1px solid var(--line);background:#fbfdfd
+}
+.pane > header h2{font-size:13px;font-weight:700;color:var(--brand-d);margin-inline-end:auto}
+.pane .body{overflow:auto;padding:12px;flex:1}
+
+/* ---------- Liste des fiches ---------- */
+#fichesList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+#fichesList li{
+  border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;background:#fff;
+  display:flex;flex-direction:column;gap:2px;transition:.13s
+}
+#fichesList li:hover{border-color:var(--brand);background:var(--brand-l)}
+#fichesList li.active{border-color:var(--brand);background:var(--brand-l);box-shadow:inset 0 0 0 1px var(--brand)}
+#fichesList .t{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fichesList .m{font-size:11px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+.badge{background:var(--brand-l);color:var(--brand-d);border-radius:20px;padding:0 7px;font-size:10.5px;font-weight:600}
+.empty{color:var(--muted);font-size:12.5px;text-align:center;padding:18px 6px}
+
+/* ---------- Formulaire ---------- */
+fieldset{border:1px solid var(--line);border-radius:9px;padding:10px 12px 12px;margin:0 0 12px}
+legend{font-size:12px;font-weight:700;color:var(--brand-d);padding:0 6px;text-transform:uppercase;letter-spacing:.3px}
+.grid{display:grid;gap:9px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:1500px){ .g3{grid-template-columns:1fr 1fr} }
+label.field{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--muted);font-weight:600}
+label.field > input, label.field > select, label.field > textarea{
+  border:1px solid var(--line);border-radius:7px;padding:7px 9px;background:#fff;color:var(--ink);
+  font-size:13.5px;font-weight:400;width:100%;transition:.13s
+}
+label.field > textarea{resize:vertical;min-height:74px;line-height:1.5}
+label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(14,124,102,.14)}
+.hint{font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.checkline{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink);font-weight:500}
+.checkline input{width:16px;height:16px;accent-color:var(--brand)}
+.rowbtns{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* ---------- Éditeur d'étapes ---------- */
+.step{border:1px solid var(--line);border-radius:9px;margin-bottom:10px;overflow:hidden;background:#fff}
+.step > .sh{display:flex;align-items:center;gap:6px;background:var(--brand-l);padding:5px 9px;border-bottom:1px solid var(--line)}
+.step > .sh .n{font-weight:700;color:var(--brand-d);font-size:12.5px;margin-inline-end:auto}
+.step .sb{padding:9px;display:grid;gap:8px;grid-template-columns:1fr 1fr}
+@media (max-width:1200px){ .step .sb{grid-template-columns:1fr} }
+.step textarea{min-height:58px}
+
+/* ---------- Aperçu ---------- */
+#previewScroll{flex:1;overflow:auto;background:#5b6b72;padding:14px;display:flex;justify-content:center;align-items:flex-start;direction:ltr}
+#scaleHolder{position:relative}
+#paper{transform-origin:top left;display:flex;flex-direction:column;gap:14px;direction:ltr}
+.zoom{display:flex;align-items:center;gap:4px}
+.zoom .lvl{font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+.note{font-size:11.5px;color:var(--muted);padding:6px 12px;border-top:1px solid var(--line);background:#fbfdfd}
+
+/* ---------- Boîtes de dialogue ---------- */
+.modal{position:fixed;inset:0;background:rgba(12,30,36,.55);display:none;place-items:center;z-index:50;padding:16px}
+.modal.on{display:grid}
+.modal .box{background:#fff;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.3);width:min(560px,100%);overflow:hidden}
+.modal .box h3{padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;color:var(--brand-d)}
+.modal .box .c{padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
+.modal .box .f{padding:10px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;background:#fbfdfd}
+.modal input[type=text],.modal textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px 10px}
+.modal ul{margin:0;padding-inline-start:20px;font-size:13px;color:var(--ink);line-height:1.7}
+#toast{
+  position:fixed;inset-inline-end:16px;bottom:16px;background:var(--brand-d);color:#fff;
+  padding:9px 14px;border-radius:8px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);
+  transition:.22s;pointer-events:none;z-index:60;font-size:13px
+}
+#toast.on{opacity:1;transform:none}
+@media (max-width:1080px){
+  .layout{grid-template-columns:1fr;height:auto;overflow:visible}
+  .pane{max-height:none}
+  body{overflow:auto}
+}
+
+/* ============================================================
+   FEUILLE DE LA JADHADHA (document imprimable) — A4 PAYSAGE
+   ============================================================ */
+#paper .page{
+  width:297mm; height:210mm; padding:6mm 7mm; background:#fff; color:#000;
+  box-sizing:border-box; display:flex; flex-direction:column;
+  box-shadow:0 4px 18px rgba(0,0,0,.28);
+  font-family:Calibri,"Segoe UI",Arial,sans-serif; font-size:10.5pt; line-height:1.28;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+#paper .page[data-lang="ar"]{
+  font-family:"Traditional Arabic","Noto Naskh Arabic",Amiri,"Segoe UI",Tahoma,Arial,sans-serif;
+  font-size:13.5pt; line-height:1.42;
+}
+#paper .p-body{flex:1 1 auto;min-height:0;overflow:hidden;display:block;position:relative}
+#paper .p-foot{flex:0 0 auto;margin-top:2mm;border-top:1pt solid #14493d;padding-top:1.2mm}
+#paper .f3{display:flex;justify-content:space-between;gap:6mm;font-size:9pt;font-weight:600}
+#paper .page[data-lang="ar"] .f3{font-size:11.5pt}
+#paper .f3 > div{flex:1}
+#paper .f3 > div:nth-child(2){text-align:center}
+#paper .f3 > div:nth-child(3){text-align:end}
+#paper .fpage{text-align:center;font-size:8.5pt;color:#33484f;margin-top:.6mm;letter-spacing:.3px}
+#paper .page[data-lang="ar"] .fpage{font-size:10.5pt}
+
+/* En-tête officiel */
+#paper .doc-head{display:flex;align-items:stretch;gap:4mm;border:.9pt solid #14493d;border-radius:1.6mm;padding:2mm 3mm;margin-bottom:2.2mm}
+#paper .doc-head .col{flex:1;display:flex;flex-direction:column;justify-content:center;gap:.4mm;font-size:9.5pt;font-weight:600}
+#paper .page[data-lang="ar"] .doc-head .col{font-size:12pt}
+#paper .doc-head .col.mid{flex:0 0 auto;align-items:center;justify-content:center;text-align:center;max-width:78mm;gap:1mm}
+#paper .doc-head .col.end{text-align:end;align-items:flex-end}
+#paper .page[dir="rtl"] .doc-head .col.end{align-items:flex-start}
+#paper .doc-head .ministry{font-weight:700;font-size:9.5pt;color:#14493d;text-align:center}
+#paper .page[data-lang="ar"] .doc-head .ministry{font-size:12.5pt}
+#paper .doc-head img{max-height:16mm;max-width:34mm;object-fit:contain}
+#paper .doc-head .kv{color:#000}
+#paper .doc-head .kv b{color:#14493d}
+
+/* Bandeau titre */
+#paper .doc-title{
+  background:#e6f4f0;border:.9pt solid #14493d;border-radius:1.6mm;
+  padding:1.6mm 3mm;margin-bottom:2.2mm;display:flex;align-items:center;gap:4mm
+}
+#paper .doc-title .lbl{font-size:8.5pt;font-weight:700;color:#14493d;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+#paper .page[data-lang="ar"] .doc-title .lbl{font-size:11pt;text-transform:none}
+#paper .doc-title .val{flex:1;text-align:center;font-size:14pt;font-weight:700;color:#0b2c25}
+#paper .page[data-lang="ar"] .doc-title .val{font-size:17pt}
+#paper .doc-title .num{font-size:9pt;font-weight:700;color:#14493d;white-space:nowrap}
+#paper .page[data-lang="ar"] .doc-title .num{font-size:11.5pt}
+
+/* Bandeau infos */
+#paper table.meta{width:100%;border-collapse:collapse;margin-bottom:2.2mm;table-layout:fixed}
+#paper table.meta td{border:.7pt solid #6d8a83;padding:1.1mm 2mm;vertical-align:middle}
+#paper table.meta td .k{font-size:8pt;font-weight:700;color:#14493d;display:block;letter-spacing:.2px}
+#paper .page[data-lang="ar"] table.meta td .k{font-size:10.5pt}
+#paper table.meta td .v{font-size:10.5pt}
+#paper .page[data-lang="ar"] table.meta td .v{font-size:13pt}
+
+/* Sections texte */
+#paper .sec{border:.7pt solid #6d8a83;border-radius:1.4mm;margin-bottom:2.2mm;overflow:hidden}
+#paper .sec > .st{background:#e6f4f0;border-bottom:.7pt solid #6d8a83;padding:.9mm 2.5mm;font-weight:700;font-size:10pt;color:#14493d}
+#paper .page[data-lang="ar"] .sec > .st{font-size:12.5pt}
+#paper .sec > .sc{padding:1.4mm 3mm}
+#paper .sec ul{margin:0;padding-inline-start:5mm}
+#paper .sec li{margin:.2mm 0}
+#paper .sec p{margin:.4mm 0}
+
+/* Tableau des étapes */
+#paper table.steps{width:100%;border-collapse:collapse;table-layout:fixed}
+#paper table.steps th{
+  background:#14493d;color:#fff;border:.7pt solid #14493d;padding:1.2mm 1.6mm;
+  font-size:9.5pt;font-weight:700;text-align:center
+}
+#paper .page[data-lang="ar"] table.steps th{font-size:12pt}
+#paper table.steps td{border:.7pt solid #6d8a83;padding:1.2mm 1.8mm;vertical-align:top;font-size:10pt}
+#paper .page[data-lang="ar"] table.steps td{font-size:12.5pt}
+#paper table.steps td.c{text-align:center;vertical-align:middle;font-weight:600}
+#paper table.steps ul{margin:0;padding-inline-start:4.4mm}
+#paper table.steps p{margin:0 0 .5mm}
+#paper table.steps tr:nth-child(even) td{background:#f6faf9}
+#paper .cont{font-size:8pt;color:#4a6a63;font-style:italic;margin-bottom:1mm}
+#paper .page[data-lang="ar"] .cont{font-size:10.5pt}
+
+/* ---------- IMPRESSION ---------- */
+@page{ size:A4 landscape; margin:0; }
+@media print{
+  html,body{background:#fff!important;height:auto!important;overflow:visible!important}
+  .topbar,#sidebar,#editor,.pane>header,.note,.modal,#toast,#previewTools{display:none!important}
+  .layout{display:block!important;padding:0!important;margin:0!important;height:auto!important;overflow:visible!important;gap:0!important}
+  #previewPane{display:block!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;background:#fff!important}
+  #previewScroll{display:block!important;overflow:visible!important;padding:0!important;background:#fff!important;height:auto!important}
+  #scaleHolder{height:auto!important;width:auto!important}
+  #paper{transform:none!important;gap:0!important;display:block!important}
+  #paper .page{
+    box-shadow:none!important;margin:0!important;width:297mm!important;height:210mm!important;
+    break-after:page;page-break-after:always;overflow:hidden
+  }
+  #paper .page:last-child{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-mark">🧬</div>
+    <div>
+      <h1 data-i18n="appTitle">Générateur de جذاذات — SVT</h1>
+      <div class="sub" data-i18n="appSub">Lycée Qualifiant Tilmi — Direction Provinciale de Tinghir</div>
+    </div>
+  </div>
+  <div class="lang-switch">
+    <button id="langFr" class="on">Français</button>
+    <button id="langAr">العربية</button>
+  </div>
+  <button class="btn ghost" id="btnHelp" title="Aide">?</button>
+  <button class="btn primary" id="btnPrint">🖨 <span data-i18n="printPdf">Imprimer / PDF</span></button>
+</header>
+
+<main class="layout">
+
+  <!-- ============ Colonne 1 : mes fiches ============ -->
+  <section class="pane" id="sidebar">
+    <header>
+      <h2 data-i18n="myFiches">Mes fiches</h2>
+      <button class="btn sm" id="btnNew">＋ <span data-i18n="new">Nouvelle</span></button>
+    </header>
+    <div class="body">
+      <label class="field" style="margin-bottom:9px">
+        <input type="search" id="searchBox" data-ph="searchPh" placeholder="Rechercher…">
+      </label>
+      <ul id="fichesList"></ul>
+    </div>
+    <div style="padding:9px 12px;border-top:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap;background:#fbfdfd">
+      <button class="btn sm" id="btnDup" data-i18n="duplicate">Dupliquer</button>
+      <button class="btn sm" id="btnRen" data-i18n="rename">Renommer</button>
+      <button class="btn sm danger" id="btnDel" data-i18n="delete">Supprimer</button>
+      <button class="btn sm" id="btnExport" data-i18n="exportJson">Exporter</button>
+      <button class="btn sm" id="btnImport" data-i18n="importJson">Importer</button>
+      <input type="file" id="fileImport" accept="application/json,.json" hidden>
+    </div>
+  </section>
+
+  <!-- ============ Colonne 2 : saisie ============ -->
+  <section class="pane" id="editor">
+    <header>
+      <h2 data-i18n="editor">Saisie de la fiche</h2>
+      <span class="hint" id="savedAt"></span>
+    </header>
+    <div class="body">
+
+      <fieldset>
+        <legend data-i18n="secHeader">En-tête officiel</legend>
+        <div class="grid g2">
+          <label class="field"><span data-i18n="fMinistry">Ministère</span>
+            <input data-f="ministere"></label>
+          <label class="field"><span data-i18n="fAcademie">Académie Régionale</span>
+            <input data-f="academie"></label>
+          <label class="field"><span data-i18n="fDirection">Direction Provinciale</span>
+            <input data-f="direction"></label>
+          <label class="field"><span data-i18n="fEtab">Établissement</span>
+            <input data-f="etablissement"></label>
+        </div>
+        <div class="rowbtns" style="margin-top:9px">
+          <button class="btn sm" id="btnLogo" data-i18n="chooseLogo">Choisir un logo…</button>
+          <button class="btn sm" id="btnLogoDel" data-i18n="removeLogo">Retirer le logo</button>
+          <button class="btn sm" id="btnDefaults" data-i18n="fillDefaults">Valeurs par défaut</button>
+          <button class="btn sm" id="btnSaveDefaults" data-i18n="saveDefaults">Mémoriser comme défaut</button>
+          <input type="file" id="fileLogo" accept="image/*" hidden>
+        </div>
+        <div class="hint" data-i18n="logoHint">Le logo est enregistré localement (redimensionné automatiquement).</div>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="secMeta">Identification de la fiche</legend>
+        <div class="grid g3">
+          <label class="field"><span data-i18n="fNiveau">Niveau</span>
+            <select data-f="niveau" id="selNiveau"></select></label>
+          <label class="field"><span data-i18n="fNiveauCustom">Niveau personnalisé</span>
+            <input data-f="niveauLibre" data-ph="optional" placeholder="(facultatif)"></label>
+          <label class="field"><span data-i18n="fMatiere">Matière</span>
+            <input data-f="matiere"></label>
+          <label class="field"><span data-i18n="fUnite">Unité / Module</span>
+            <input data-f="unite"></label>
+          <label class="field"><span data-i18n="fDuree">Durée</span>
+            <input data-f="duree" data-ph="dureePh" placeholder="2 h (2 séances)"></label>
+          <label class="field"><span data-i18n="fNum">Fiche N°</span>
+            <input data-f="numero"></label>
+          <label class="field"><span data-i18n="fProf">Professeur</span>
+            <input data-f="professeur"></label>
+          <label class="field"><span data-i18n="fAnnee">Année scolaire</span>
+            <input data-f="annee"></label>
+          <label class="field"><span data-i18n="fDocLang">Langue du document</span>
+            <select data-f="docLang" id="selDocLang">
+              <option value="auto" data-i18n="langAuto">Suivre l'interface</option>
+              <option value="fr">Français</option>
+              <option value="ar">العربية</option>
+            </select></label>
+        </div>
+        <label class="field" style="margin-top:9px"><span data-i18n="fTitre">Titre du cours</span>
+          <input data-f="titre"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="secContent">Contenu pédagogique</legend>
+        <label class="field"><span data-i18n="fComp">Compétences et objectifs visés</span>
+          <textarea data-f="competences" data-ph="listPh" placeholder="Une ligne par élément…"></textarea>
+          <span class="hint" data-i18n="listHint">Une ligne = une puce. Une ligne vide = un saut de paragraphe.</span></label>
+        <label class="field" style="margin-top:9px"><span data-i18n="fPrereq">Prérequis (acquis antérieurs)</span>
+          <textarea data-f="prerequis" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
+        <label class="field" style="margin-top:9px"><span data-i18n="fSituation">Situation de départ / Situation-problème</span>
+          <textarea data-f="situation" data-ph="listPh" placeholder="Une ligne par élément…"></textarea></label>
+      </fieldset>
+
+      <fieldset>
+        <legend data-i18n="secSteps">Étapes du cours</legend>
+        <div class="rowbtns" style="margin-bottom:9px">
+          <button class="btn sm" id="btnAddStep">＋ <span data-i18n="addStep">Ajouter une étape</span></button>
+          <label class="checkline"><input type="checkbox" data-f="showEtape"><span data-i18n="colEtapeOn">Colonne « Étape »</span></label>
+          <label class="checkline"><input type="checkbox" data-f="stretch"><span data-i18n="stretchOn">Étirer les lignes pour remplir la page</span></label>
+          <label class="checkline"><input type="checkbox" data-f="repeatHead"><span data-i18n="repeatHeadOn">Répéter l'en-tête sur chaque page</span></label>
+        </div>
+        <div id="stepsEditor"></div>
+      </fieldset>
+
+    </div>
+  </section>
+
+  <!-- ============ Colonne 3 : aperçu ============ -->
+  <section class="pane" id="previewPane">
+    <header id="previewTools">
+      <h2 data-i18n="preview">Aperçu (A4 paysage)</h2>
+      <div class="zoom">
+        <button class="btn sm" id="zOut">−</button>
+        <span class="lvl" id="zLvl">100%</span>
+        <button class="btn sm" id="zIn">＋</button>
+        <button class="btn sm" id="zFit" data-i18n="fit">Ajuster</button>
+      </div>
+    </header>
+    <div id="previewScroll"><div id="scaleHolder"><div id="paper"></div></div></div>
+    <div class="note" data-i18n="printNote">Impression : Ctrl+P → Destination « Enregistrer au format PDF », Format A4, Orientation Paysage, Marges « Aucune », cocher « Graphiques d'arrière-plan ».</div>
+  </section>
+
+</main>
+
+<!-- ============ Boîtes de dialogue ============ -->
+<div class="modal" id="mdPrompt">
+  <div class="box">
+    <h3 id="mdPromptTitle">…</h3>
+    <div class="c"><input type="text" id="mdPromptInput"></div>
+    <div class="f">
+      <button class="btn" data-close="mdPrompt" data-i18n="cancel">Annuler</button>
+      <button class="btn primary" id="mdPromptOk" data-i18n="ok">Valider</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mdConfirm">
+  <div class="box">
+    <h3 id="mdConfirmTitle">…</h3>
+    <div class="c"><p id="mdConfirmText" style="margin:0"></p></div>
+    <div class="f">
+      <button class="btn" data-close="mdConfirm" data-i18n="cancel">Annuler</button>
+      <button class="btn primary" id="mdConfirmOk" data-i18n="confirm">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="mdHelp">
+  <div class="box">
+    <h3 data-i18n="helpTitle">Aide</h3>
+    <div class="c"><div id="helpBody"></div></div>
+    <div class="f"><button class="btn primary" data-close="mdHelp" data-i18n="close">Fermer</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   1. DONNÉES DE RÉFÉRENCE ET TRADUCTIONS
+   ============================================================ */
+var LS_KEY = "jadadat_svt_v1";
+
+var LEVELS = [
+  { code:"TCS",      fr:"Tronc Commun Scientifique (TCS)",                 ar:"الجذع المشترك العلمي (TCS)" },
+  { code:"1BAC SE",  fr:"1ère Bac Sciences Expérimentales (1BAC SE)",      ar:"الأولى باكالوريا علوم تجريبية (1BAC SE)" },
+  { code:"1BAC LSH", fr:"1ère Bac Lettres et Sciences Humaines (1BAC LSH)",ar:"الأولى باكالوريا آداب وعلوم إنسانية (1BAC LSH)" },
+  { code:"2BAC PC",  fr:"2ème Bac Sciences Physiques (2BAC PC)",           ar:"الثانية باكالوريا علوم فيزيائية (2BAC PC)" },
+  { code:"2BAC SVT", fr:"2ème Bac Sciences de la Vie et de la Terre (2BAC SVT)", ar:"الثانية باكالوريا علوم الحياة والأرض (2BAC SVT)" }
+];
+
+/* Libellés de l'interface */
+var I18N = {
+  fr:{
+    appTitle:"Générateur de جذاذات — SVT", appSub:"Lycée Qualifiant Tilmi — Direction Provinciale de Tinghir",
+    printPdf:"Imprimer / PDF", myFiches:"Mes fiches", new:"Nouvelle", duplicate:"Dupliquer", rename:"Renommer",
+    delete:"Supprimer", exportJson:"Exporter", importJson:"Importer", editor:"Saisie de la fiche",
+    secHeader:"En-tête officiel", fMinistry:"Ministère", fAcademie:"Académie Régionale",
+    fDirection:"Direction Provinciale", fEtab:"Établissement", chooseLogo:"Choisir un logo…",
+    removeLogo:"Retirer le logo", fillDefaults:"Valeurs par défaut", saveDefaults:"Mémoriser comme défaut",
+    logoHint:"Le logo est enregistré localement (redimensionné automatiquement).",
+    secMeta:"Identification de la fiche", fNiveau:"Niveau", fNiveauCustom:"Niveau personnalisé",
+    fMatiere:"Matière", fUnite:"Unité / Module", fDuree:"Durée", fNum:"Fiche N°", fProf:"Professeur",
+    fAnnee:"Année scolaire", fDocLang:"Langue du document", langAuto:"Suivre l'interface",
+    fTitre:"Titre du cours", secContent:"Contenu pédagogique", fComp:"Compétences et objectifs visés",
+    fPrereq:"Prérequis (acquis antérieurs)", fSituation:"Situation de départ / Situation-problème",
+    listHint:"Une ligne = une puce. Une ligne vide = un saut de paragraphe.",
+    secSteps:"Étapes du cours", addStep:"Ajouter une étape", colEtapeOn:"Colonne « Étape »",
+    stretchOn:"Étirer les lignes pour remplir la page", repeatHeadOn:"Répéter l'en-tête sur chaque page",
+    preview:"Aperçu (A4 paysage)", fit:"Ajuster",
+    printNote:"Impression : Ctrl+P → Destination « Enregistrer au format PDF », Format A4, Orientation Paysage, Marges « Aucune », cocher « Graphiques d'arrière-plan ».",
+    cancel:"Annuler", ok:"Valider", confirm:"Confirmer", close:"Fermer", helpTitle:"Aide",
+    searchPh:"Rechercher…", optional:"(facultatif)", dureePh:"2 h (2 séances)", listPh:"Une ligne par élément…",
+    step:"Étape", up:"Monter", down:"Descendre", noFiches:"Aucune fiche. Cliquez sur « ＋ Nouvelle ».",
+    untitled:"Fiche sans titre", newName:"Nom de la nouvelle fiche", renameTitle:"Renommer la fiche",
+    delTitle:"Supprimer la fiche", delText:"Cette fiche sera définitivement supprimée de ce navigateur. Continuer ?",
+    saved:"Enregistré", savedAt:"Enregistré à", copySuffix:"(copie)", imported:"fiche(s) importée(s)",
+    importErr:"Fichier invalide.", quotaErr:"Espace de stockage saturé : allégez le logo ou supprimez des fiches.",
+    noStep:"Aucune étape. Cliquez sur « ＋ Ajouter une étape ».",
+    help:["Toutes les fiches sont enregistrées automatiquement dans ce navigateur (localStorage) : aucune connexion internet n'est nécessaire.",
+      "Pour obtenir un PDF : bouton « Imprimer / PDF » puis, dans la fenêtre du navigateur, choisir « Enregistrer au format PDF », format A4, orientation Paysage, marges « Aucune » et cocher « Graphiques d'arrière-plan ».",
+      "La pagination est calculée automatiquement : les étapes qui ne tiennent pas sont reportées sur la page suivante avec le titre des colonnes répété.",
+      "L'option « Étirer les lignes » agrandit les lignes du tableau pour remplir la page et éviter les grands espaces vides.",
+      "Sauvegarde de secours : bouton « Exporter » (fichier .json) puis « Importer » sur un autre ordinateur.",
+      "Les sections laissées vides ne sont pas imprimées."]
+  },
+  ar:{
+    appTitle:"مولّد الجذاذات — علوم الحياة والأرض", appSub:"الثانوية التأهيلية تلمي — المديرية الإقليمية تنغير",
+    printPdf:"طباعة / PDF", myFiches:"جذاذاتي", new:"جديدة", duplicate:"نسخ", rename:"إعادة التسمية",
+    delete:"حذف", exportJson:"تصدير", importJson:"استيراد", editor:"تحرير الجذاذة",
+    secHeader:"الترويسة الرسمية", fMinistry:"الوزارة", fAcademie:"الأكاديمية الجهوية",
+    fDirection:"المديرية الإقليمية", fEtab:"المؤسسة", chooseLogo:"اختيار شعار…",
+    removeLogo:"حذف الشعار", fillDefaults:"القيم الافتراضية", saveDefaults:"اعتمادها كقيم افتراضية",
+    logoHint:"يُحفظ الشعار محليًا (مع تصغيره تلقائيًا).",
+    secMeta:"تعريف الجذاذة", fNiveau:"المستوى", fNiveauCustom:"مستوى مخصص",
+    fMatiere:"المادة", fUnite:"الوحدة / المجزوءة", fDuree:"المدة الزمنية", fNum:"رقم الجذاذة", fProf:"الأستاذ",
+    fAnnee:"السنة الدراسية", fDocLang:"لغة الوثيقة", langAuto:"حسب لغة الواجهة",
+    fTitre:"عنوان الدرس", secContent:"المحتوى التربوي", fComp:"الكفايات والأهداف المتوخاة",
+    fPrereq:"المكتسبات السابقة", fSituation:"وضعية الانطلاق / الوضعية المشكلة",
+    listHint:"كل سطر يقابل نقطة في اللائحة. السطر الفارغ يفصل بين الفقرات.",
+    secSteps:"مراحل الدرس", addStep:"إضافة مرحلة", colEtapeOn:"عمود «المرحلة»",
+    stretchOn:"توسيع الصفوف لملء الصفحة", repeatHeadOn:"تكرار الترويسة في كل صفحة",
+    preview:"معاينة (A4 أفقي)", fit:"ملاءمة",
+    printNote:"الطباعة: Ctrl+P ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
+    cancel:"إلغاء", ok:"موافق", confirm:"تأكيد", close:"إغلاق", helpTitle:"مساعدة",
+    searchPh:"بحث…", optional:"(اختياري)", dureePh:"ساعتان (حصتان)", listPh:"عنصر واحد في كل سطر…",
+    step:"المرحلة", up:"أعلى", down:"أسفل", noFiches:"لا توجد جذاذات. اضغط «＋ جديدة».",
+    untitled:"جذاذة بدون عنوان", newName:"اسم الجذاذة الجديدة", renameTitle:"إعادة تسمية الجذاذة",
+    delTitle:"حذف الجذاذة", delText:"سيتم حذف هذه الجذاذة نهائيًا من هذا المتصفح. هل تريد المتابعة؟",
+    saved:"تم الحفظ", savedAt:"تم الحفظ على الساعة", copySuffix:"(نسخة)", imported:"جذاذة/جذاذات تم استيرادها",
+    importErr:"ملف غير صالح.", quotaErr:"مساحة التخزين ممتلئة: قلّص حجم الشعار أو احذف بعض الجذاذات.",
+    noStep:"لا توجد مراحل. اضغط «＋ إضافة مرحلة».",
+    help:["تُحفظ جميع الجذاذات تلقائيًا داخل هذا المتصفح (localStorage) دون الحاجة إلى أي اتصال بالإنترنت.",
+      "للحصول على ملف PDF: اضغط «طباعة / PDF» ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
+      "يتم ترقيم الصفحات تلقائيًا: المراحل التي لا تسع في الصفحة تُنقل إلى الصفحة الموالية مع تكرار عناوين الأعمدة.",
+      "خيار «توسيع الصفوف» يوسّع صفوف الجدول لملء الصفحة وتفادي الفراغات الكبيرة.",
+      "للنسخ الاحتياطي: زر «تصدير» (ملف .json) ثم «استيراد» في حاسوب آخر.",
+      "الأقسام الفارغة لا تظهر في الطباعة."]
+  }
+};
+
+/* Libellés imprimés sur la jadhadha */
+var DOC = {
+  fr:{
+    academie:"Académie Régionale d'Éducation et de Formation", direction:"Direction Provinciale",
+    etab:"Établissement", academieS:"Académie", directionS:"Direction", etabS:"Établissement",
+    annee:"Année scolaire", prof:"Professeur", matiere:"Matière",
+    niveau:"Niveau", unite:"Unité / Module", duree:"Durée", num:"Fiche N°",
+    ficheLabel:"Fiche pédagogique", titre:"Titre du cours",
+    comp:"Compétences et objectifs visés", prereq:"Prérequis (acquis antérieurs)",
+    situation:"Situation de départ / Situation-problème",
+    cObjectifs:"Objectifs", cCompetences:"Compétences", cProf:"Activité du professeur",
+    cEleve:"Activité de l'élève", cMoyens:"Moyens et supports", cEval:"Évaluation", cEtape:"Étape",
+    page:"Page", of:"/", cont:"— suite du tableau des étapes —",
+    seeds:["Mise en situation","Construction des apprentissages","Évaluation / Trace écrite"]
+  },
+  ar:{
+    academie:"الأكاديمية الجهوية للتربية والتكوين", direction:"المديرية الإقليمية",
+    etab:"المؤسسة", academieS:"الأكاديمية", directionS:"المديرية", etabS:"المؤسسة",
+    annee:"السنة الدراسية", prof:"الأستاذ", matiere:"المادة",
+    niveau:"المستوى", unite:"الوحدة / المجزوءة", duree:"المدة الزمنية", num:"رقم الجذاذة",
+    ficheLabel:"جذاذة تربوية", titre:"عنوان الدرس",
+    comp:"الكفايات والأهداف المتوخاة", prereq:"المكتسبات السابقة",
+    situation:"وضعية الانطلاق / الوضعية المشكلة",
+    cObjectifs:"الأهداف", cCompetences:"الكفايات", cProf:"نشاط الأستاذ",
+    cEleve:"نشاط المتعلم", cMoyens:"الوسائل والدعامات", cEval:"التقويم", cEtape:"المرحلة",
+    page:"الصفحة", of:"/", cont:"— تتمة جدول المراحل —",
+    seeds:["وضعية الانطلاق","بناء التعلمات","التقويم / الخلاصة"]
+  }
+};
+
+var DEFAULTS = {
+  fr:{ ministere:"Royaume du Maroc — Ministère de l'Éducation Nationale, du Préscolaire et des Sports",
+       academie:"Académie Régionale d'Éducation et de Formation Drâa-Tafilalet",
+       direction:"Direction Provinciale de Tinghir", etablissement:"Lycée Qualifiant Tilmi",
+       matiere:"Sciences de la Vie et de la Terre", professeur:"Pr : Omari Mohammed" },
+  ar:{ ministere:"المملكة المغربية — وزارة التربية الوطنية والتعليم الأولي والرياضة",
+       academie:"الأكاديمية الجهوية للتربية والتكوين لجهة درعة تافيلالت",
+       direction:"المديرية الإقليمية تنغير", etablissement:"الثانوية التأهيلية تلمي",
+       matiere:"علوم الحياة والأرض", professeur:"الأستاذ: عمري محمد" }
+};
+
+/* ============================================================
+   2. OUTILS
+   ============================================================ */
+function $(s,r){ return (r||document).querySelector(s); }
+function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function el(tag,cls,txt){ var e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+function uid(){ return "f"+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function T(k){ return (I18N[state.uiLang] && I18N[state.uiLang][k]) || k; }
+function schoolYear(){ var d=new Date(), y=d.getFullYear(); return d.getMonth()>=7 ? y+"/"+(y+1) : (y-1)+"/"+y; }
+function toast(msg){ var t=$("#toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(function(){ t.classList.remove("on"); },2200); }
+
+var pxPerMm = (function(){
+  var d=el("div"); d.style.cssText="position:absolute;width:100mm;height:0;visibility:hidden";
+  document.body.appendChild(d); var v=d.getBoundingClientRect().width/100; d.parentNode.removeChild(d);
+  return v || 3.7795;
+})();
+
+/* Texte multi-lignes -> liste à puces ou paragraphes (sans innerHTML) */
+function textToNodes(parent, txt){
+  var lines = String(txt||"").replace(/\r/g,"").split("\n").map(function(s){ return s.trim(); });
+  var chunk=[];
+  function flush(){
+    if(!chunk.length) return;
+    if(chunk.length===1){ parent.appendChild(el("p",null,chunk[0])); }
+    else{
+      var ul=el("ul");
+      chunk.forEach(function(l){ ul.appendChild(el("li",null,l.replace(/^[-•*–]\s*/,""))); });
+      parent.appendChild(ul);
+    }
+    chunk=[];
+  }
+  lines.forEach(function(l){ if(l==="") flush(); else chunk.push(l); });
+  flush();
+}
+function hasText(v){ return String(v||"").trim()!==""; }
+
+/* ============================================================
+   3. ÉTAT ET PERSISTANCE
+   ============================================================ */
+var state = { version:1, uiLang:"fr", settings:{ logo:"", defaults:null }, fiches:[], activeId:null };
+
+function blankStep(etape){
+  return { etape:etape||"", objectifs:"", competences:"", prof:"", eleve:"", moyens:"", evaluation:"" };
+}
+function newFiche(){
+  var lang = state.uiLang, d = (state.settings.defaults) || DEFAULTS[lang];
+  var seeds = DOC[lang].seeds;
+  return {
+    id:uid(), nom:"", createdAt:Date.now(), updatedAt:Date.now(),
+    ministere:d.ministere||"", academie:d.academie||"", direction:d.direction||"",
+    etablissement:d.etablissement||"", niveau:"TCS", niveauLibre:"",
+    matiere:d.matiere||"", unite:"", titre:"", duree:"", numero:"1",
+    professeur:d.professeur||"", annee:schoolYear(), docLang:"auto",
+    competences:"", prerequis:"", situation:"",
+    showEtape:false, stretch:true, repeatHead:false,
+    steps:[ blankStep(seeds[0]), blankStep(seeds[1]), blankStep(seeds[2]) ]
+  };
+}
+function active(){
+  for(var i=0;i<state.fiches.length;i++) if(state.fiches[i].id===state.activeId) return state.fiches[i];
+  return null;
+}
+function ficheName(f){
+  return (f.nom && f.nom.trim()) || (f.titre && f.titre.trim()) || T("untitled");
+}
+function docLangOf(f){ return (f && f.docLang && f.docLang!=="auto") ? f.docLang : state.uiLang; }
+
+function save(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    var d=new Date();
+    $("#savedAt").textContent = "✓ "+T("savedAt")+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  }catch(e){ toast(T("quotaErr")); }
+}
+function load(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(!raw) return false;
+    var s = JSON.parse(raw);
+    if(!s || !Array.isArray(s.fiches)) return false;
+    state = Object.assign(state, s);
+    state.settings = state.settings || { logo:"", defaults:null };
+    return true;
+  }catch(e){ return false; }
+}
+
+/* ============================================================
+   4. INTERFACE : langue, liste, formulaire
+   ============================================================ */
+function applyLang(){
+  var L = state.uiLang;
+  document.documentElement.lang = L;
+  document.documentElement.dir = (L==="ar") ? "rtl" : "ltr";
+  $("#langFr").classList.toggle("on", L==="fr");
+  $("#langAr").classList.toggle("on", L==="ar");
+  $$("[data-i18n]").forEach(function(e){ e.textContent = T(e.getAttribute("data-i18n")); });
+  $$("[data-ph]").forEach(function(e){ e.placeholder = T(e.getAttribute("data-ph")); });
+  document.title = T("appTitle");
+  /* Niveaux */
+  var sel = $("#selNiveau"), cur = sel.value;
+  sel.innerHTML = "";
+  LEVELS.forEach(function(l){
+    var o = el("option", null, l[L]); o.value = l.code; sel.appendChild(o);
+  });
+  if(cur) sel.value = cur;
+  /* Aide */
+  var hb = $("#helpBody"); hb.innerHTML = "";
+  var ul = el("ul"); T("help").forEach(function(t){ ul.appendChild(el("li",null,t)); }); hb.appendChild(ul);
+}
+
+function renderList(){
+  var ul = $("#fichesList"), q = ($("#searchBox").value||"").toLowerCase().trim();
+  ul.innerHTML = "";
+  var items = state.fiches.filter(function(f){
+    if(!q) return true;
+    return (ficheName(f)+" "+f.titre+" "+f.unite+" "+f.niveau+" "+f.niveauLibre).toLowerCase().indexOf(q) >= 0;
+  });
+  if(!items.length){ ul.appendChild(el("div","empty",T("noFiches"))); return; }
+  items.forEach(function(f){
+    var li = el("li"); if(f.id===state.activeId) li.className="active";
+    li.appendChild(el("div","t", ficheName(f)));
+    var m = el("div","m");
+    m.appendChild(el("span","badge", f.niveauLibre || f.niveau || "—"));
+    if(hasText(f.unite)) m.appendChild(el("span",null,f.unite));
+    m.appendChild(el("span",null,"N° "+(f.numero||"—")));
+    li.appendChild(m);
+    li.onclick = function(){ state.activeId = f.id; save(); renderAll(); };
+    ul.appendChild(li);
+  });
+}
+
+function renderForm(){
+  var f = active();
+  $$("[data-f]").forEach(function(inp){
+    var k = inp.getAttribute("data-f");
+    if(!f){ if(inp.type==="checkbox") inp.checked=false; else inp.value=""; inp.disabled=true; return; }
+    inp.disabled = false;
+    if(inp.type==="checkbox") inp.checked = !!f[k];
+    else inp.value = (f[k]==null?"":f[k]);
+  });
+  renderSteps();
+  $("#btnDup").disabled = $("#btnRen").disabled = $("#btnDel").disabled = !f;
+}
+
+var STEP_FIELDS = [
+  ["etape","cEtape"], ["objectifs","cObjectifs"], ["competences","cCompetences"],
+  ["prof","cProf"], ["eleve","cEleve"], ["moyens","cMoyens"], ["evaluation","cEval"]
+];
+
+function renderSteps(){
+  var box = $("#stepsEditor"), f = active();
+  box.innerHTML = "";
+  if(!f) return;
+  if(!f.steps.length){ box.appendChild(el("div","empty",T("noStep"))); return; }
+  var L = state.uiLang;
+  f.steps.forEach(function(st, i){
+    var wrap = el("div","step");
+    var h = el("div","sh");
+    h.appendChild(el("div","n", T("step")+" "+(i+1) + (hasText(st.etape) ? " — "+st.etape : "")));
+    [["↑","up",-1],["↓","down",1]].forEach(function(b){
+      var btn = el("button","btn sm",b[0]); btn.title=T(b[1]);
+      btn.onclick = function(){ moveStep(i,b[2]); };
+      h.appendChild(btn);
+    });
+    var bd = el("button","btn sm","⧉"); bd.title=T("duplicate");
+    bd.onclick = function(){ f.steps.splice(i+1,0,JSON.parse(JSON.stringify(st))); touch(); renderSteps(); };
+    h.appendChild(bd);
+    var bx = el("button","btn sm danger","✕"); bx.title=T("delete");
+    bx.onclick = function(){ f.steps.splice(i,1); touch(); renderSteps(); };
+    h.appendChild(bx);
+    wrap.appendChild(h);
+
+    var body = el("div","sb");
+    STEP_FIELDS.forEach(function(fd){
+      if(fd[0]==="etape" && !f.showEtape) return;
+      var lab = el("label","field");
+      lab.appendChild(el("span",null,DOC[L][fd[1]]));
+      var ta = el("textarea"); ta.value = st[fd[0]]||"";
+      if(fd[0]==="etape"){ ta.style.minHeight="38px"; lab.style.gridColumn="1 / -1"; }
+      ta.oninput = function(){
+        st[fd[0]] = ta.value; touch();
+        if(fd[0]==="etape"){ h.firstChild.textContent = T("step")+" "+(i+1)+(hasText(ta.value)?" — "+ta.value:""); }
+      };
+      lab.appendChild(ta);
+      body.appendChild(lab);
+    });
+    wrap.appendChild(body);
+    box.appendChild(wrap);
+  });
+}
+function moveStep(i,d){
+  var f = active(), j = i+d;
+  if(!f || j<0 || j>=f.steps.length) return;
+  var tmp = f.steps[i]; f.steps[i]=f.steps[j]; f.steps[j]=tmp;
+  touch(); renderSteps();
+}
+
+/* Modification -> sauvegarde + aperçu (avec anti-rebond) */
+var previewTimer=null, saveTimer=null;
+function touch(){
+  var f = active(); if(f) f.updatedAt = Date.now();
+  clearTimeout(saveTimer); saveTimer = setTimeout(save, 350);
+  clearTimeout(previewTimer); previewTimer = setTimeout(function(){ renderDoc(); renderList(); }, 260);
+}
+function renderAll(){ applyLang(); renderList(); renderForm(); renderDoc(); }
+
+/* ============================================================
+   5. CONSTRUCTION DU DOCUMENT (A4 paysage) + PAGINATION
+   ============================================================ */
+function kv(parent, label, value){
+  var d = el("div","kv");
+  var b = el("b", null, label+" : "); d.appendChild(b);
+  d.appendChild(document.createTextNode(value||"—"));
+  parent.appendChild(d);
+  return d;
+}
+function levelShort(f){
+  if(hasText(f.niveauLibre)) return f.niveauLibre.trim();
+  return f.niveau || "—";
+}
+function levelLabel(f, L){
+  if(hasText(f.niveauLibre)) return f.niveauLibre.trim();
+  for(var i=0;i<LEVELS.length;i++) if(LEVELS[i].code===f.niveau) return LEVELS[i][L];
+  return f.niveau||"—";
+}
+
+function makeHead(f, L, compact){
+  var D = DOC[L];
+  var h = el("div","doc-head");
+  var c1 = el("div","col");
+  kv(c1, D.academieS, f.academie);
+  kv(c1, D.directionS, f.direction);
+  kv(c1, D.etabS, f.etablissement);
+  var c2 = el("div","col mid");
+  if(hasText(f.ministere)) c2.appendChild(el("div","ministry", f.ministere));
+  if(state.settings.logo && !compact){
+    var img = el("img"); img.src = state.settings.logo; img.alt=""; c2.appendChild(img);
+  }
+  var c3 = el("div","col end");
+  kv(c3, D.annee, f.annee);
+  kv(c3, D.matiere, f.matiere);
+  kv(c3, D.prof, f.professeur);
+  h.appendChild(c1); h.appendChild(c2); h.appendChild(c3);
+  return h;
+}
+
+function makeTitleBand(f, L){
+  var D = DOC[L];
+  var t = el("div","doc-title");
+  t.appendChild(el("div","lbl", D.ficheLabel));
+  t.appendChild(el("div","val", hasText(f.titre) ? f.titre : "…"));
+  t.appendChild(el("div","num", D.num+" : "+(f.numero||"—")));
+  return t;
+}
+
+function makeMeta(f, L){
+  var D = DOC[L];
+  var cells = [
+    [D.niveau, levelLabel(f,L), "22%"],
+    [D.matiere, f.matiere, "22%"],
+    [D.unite, f.unite, "30%"],
+    [D.duree, f.duree, "14%"],
+    [D.num, f.numero, "12%"]
+  ];
+  var tb = el("table","meta"), tr = el("tr");
+  cells.forEach(function(c){
+    var td = el("td"); td.style.width = c[2];
+    td.appendChild(el("span","k", c[0]));
+    td.appendChild(el("span","v", hasText(c[1]) ? c[1] : "—"));
+    tr.appendChild(td);
+  });
+  var tbody = el("tbody"); tbody.appendChild(tr); tb.appendChild(tbody);
+  return tb;
+}
+
+function makeSection(title, txt){
+  var s = el("div","sec");
+  s.appendChild(el("div","st", title));
+  var c = el("div","sc");
+  textToNodes(c, txt);
+  s.appendChild(c);
+  return s;
+}
+
+function stepColumns(f){
+  var cols = [];
+  if(f.showEtape) cols.push({ k:"etape", t:"cEtape", w:"9%", center:true });
+  cols.push({ k:"objectifs",  t:"cObjectifs",   w: f.showEtape?"13%":"15%" });
+  cols.push({ k:"competences",t:"cCompetences", w: f.showEtape?"12%":"14%" });
+  cols.push({ k:"prof",       t:"cProf",        w: f.showEtape?"21%":"22%" });
+  cols.push({ k:"eleve",      t:"cEleve",       w: f.showEtape?"21%":"22%" });
+  cols.push({ k:"moyens",     t:"cMoyens",      w: f.showEtape?"13%":"14%" });
+  cols.push({ k:"evaluation", t:"cEval",        w: f.showEtape?"11%":"13%" });
+  return cols;
+}
+function makeStepTable(f, L){
+  var cols = stepColumns(f), tb = el("table","steps");
+  var thead = el("thead"), tr = el("tr");
+  cols.forEach(function(c){ var th = el("th", null, DOC[L][c.t]); th.style.width = c.w; tr.appendChild(th); });
+  thead.appendChild(tr); tb.appendChild(thead); tb.appendChild(el("tbody"));
+  return tb;
+}
+function makeStepRow(f, st){
+  var cols = stepColumns(f), tr = el("tr");
+  cols.forEach(function(c){
+    var td = el("td"); if(c.center) td.className = "c";
+    textToNodes(td, st[c.k]);
+    tr.appendChild(td);
+  });
+  return tr;
+}
+
+function makeFoot(f, L){
+  var D = DOC[L], foot = el("div","p-foot"), row = el("div","f3");
+  row.appendChild(el("div", null, D.niveau+" : "+levelShort(f)));
+  row.appendChild(el("div", null, D.annee+" : "+(f.annee||"—")));
+  row.appendChild(el("div", null, hasText(f.professeur) ? f.professeur : "—"));
+  foot.appendChild(row);
+  foot.appendChild(el("div","fpage","\u00A0"));   /* réserve la hauteur dès la pagination */
+  return foot;
+}
+
+function contentHeight(body){
+  var h = 0;
+  for(var i=0;i<body.children.length;i++){
+    var c = body.children[i];
+    var mb = parseFloat(getComputedStyle(c).marginBottom) || 0;
+    var b = c.offsetTop + c.offsetHeight + mb;
+    if(b > h) h = b;
+  }
+  return h;
+}
+
+/* Répartit l'espace libre d'une page sur une liste d'éléments (ajustement itératif :
+   les bordures et arrondis de rendu décalent légèrement le calcul). */
+function fillPage(body, targets, get, set){
+  if(!targets.length) return;
+  var nat = targets.map(get), hs = nat.slice();
+  if(body.clientHeight - contentHeight(body) < 4) return;
+  for(var it=0; it<6; it++){
+    var free = body.clientHeight - contentHeight(body) - 1;
+    if(free > -1.5 && free < 1.5) break;
+    var d = free / targets.length, moved = false;
+    targets.forEach(function(t,i){
+      var v = Math.max(nat[i], hs[i] + d);
+      if(Math.abs(v - hs[i]) > 0.4){ hs[i] = v; set(t, v); moved = true; }
+    });
+    if(!moved) break;
+  }
+}
+
+function renderDoc(){
+  var paper = $("#paper");
+  paper.innerHTML = "";
+  var f = active();
+  if(!f){ fitPreview(); return; }
+  var L = docLangOf(f), D = DOC[L], dir = (L==="ar") ? "rtl" : "ltr";
+  var pages = [], cur = null;
+
+  function newPage(first){
+    var pg = el("div","page");
+    pg.dir = dir; pg.setAttribute("data-lang", L);
+    var body = el("div","p-body");
+    pg.appendChild(body);
+    pg.appendChild(makeFoot(f, L));
+    paper.appendChild(pg);
+    cur = { pg:pg, body:body, n:0 };
+    pages.push(cur);
+    if(first || f.repeatHead){ body.appendChild(makeHead(f, L, !first)); }
+    return cur;
+  }
+  function overflows(){ return cur.body.scrollHeight > cur.body.clientHeight + 1; }
+  function push(node){
+    cur.body.appendChild(node); cur.n++;
+    if(overflows()){
+      if(cur.n === 1) return;              /* bloc plus haut qu'une page : on le garde */
+      cur.body.removeChild(node); cur.n--;
+      newPage(false);
+      cur.body.appendChild(node); cur.n++;
+    }
+  }
+
+  newPage(true);
+  push(makeTitleBand(f, L));
+  push(makeMeta(f, L));
+  if(hasText(f.competences)) push(makeSection(D.comp, f.competences));
+  if(hasText(f.prerequis))   push(makeSection(D.prereq, f.prerequis));
+  if(hasText(f.situation))   push(makeSection(D.situation, f.situation));
+
+  var steps = f.steps.filter(function(s){
+    return STEP_FIELDS.some(function(fd){ return hasText(s[fd[0]]); });
+  });
+  if(!steps.length && f.steps.length) steps = f.steps;   /* tableau vide : squelette imprimable */
+
+  if(steps.length){
+    var tbl = makeStepTable(f, L);
+    push(tbl);
+    var tbody = tbl.tBodies[0];
+    steps.forEach(function(st){
+      var tr = makeStepRow(f, st);
+      tbody.appendChild(tr);
+      if(overflows()){
+        tbody.removeChild(tr);
+        if(!tbody.rows.length && tbl.parentNode === cur.body){ cur.body.removeChild(tbl); cur.n--; }
+        newPage(false);
+        cur.body.appendChild(el("div","cont", D.cont)); cur.n++;
+        tbl = makeStepTable(f, L);
+        cur.body.appendChild(tbl); cur.n++;
+        tbody = tbl.tBodies[0];
+        tbody.appendChild(tr);
+      }
+    });
+    /* Page finale vide (dernière ligne déplacée) : on la retire */
+    if(cur.body.querySelector("table.steps") && !cur.body.querySelector("table.steps tbody tr")){
+      paper.removeChild(cur.pg); pages.pop(); cur = pages[pages.length-1];
+    }
+  }
+
+  /* Numérotation « Page X / Y » */
+  pages.forEach(function(p,i){
+    $(".fpage", p.pg).textContent = D.page+" "+(i+1)+" "+D.of+" "+pages.length;
+  });
+
+  /* Remplissage : on étire le contenu pour occuper toute la hauteur de la page */
+  if(f.stretch){
+    pages.forEach(function(p){
+      var rows = $$("table.steps tbody tr", p.body);
+      if(rows.length){
+        fillPage(p.body, rows,
+          function(tr){ return tr.offsetHeight; },
+          function(tr,v){ tr.style.height = v + "px"; });
+      }else{
+        /* page sans tableau : on répartit l'espace sur les rubriques */
+        var secs = $$(".sec > .sc", p.body);
+        if(secs.length) fillPage(p.body, secs,
+          function(sc){ return sc.offsetHeight; },
+          function(sc,v){ sc.style.height = v + "px"; });
+      }
+    });
+  }
+
+  fitPreview();
+}
+
+/* ---------- Zoom / ajustement de l'aperçu ---------- */
+var zoom = 0, autoFit = true;   /* zoom = 0 -> ajustement automatique */
+function fitPreview(){
+  var wrap = $("#previewScroll"), paper = $("#paper"), holder = $("#scaleHolder");
+  var pageW = 297 * pxPerMm;
+  var s = autoFit ? Math.min(1.6, Math.max(0.2, (wrap.clientWidth - 30) / pageW)) : zoom;
+  paper.style.transform = "scale("+s+")";
+  holder.style.width  = (pageW * s) + "px";
+  holder.style.height = (paper.scrollHeight * s) + "px";
+  $("#zLvl").textContent = Math.round(s*100) + "%";
+  zoom = s;
+}
+
+/* ============================================================
+   6. BOÎTES DE DIALOGUE
+   ============================================================ */
+function openModal(id){ $("#"+id).classList.add("on"); }
+function closeModal(id){ $("#"+id).classList.remove("on"); }
+$$("[data-close]").forEach(function(b){ b.onclick = function(){ closeModal(b.getAttribute("data-close")); }; });
+$$(".modal").forEach(function(m){ m.addEventListener("mousedown", function(e){ if(e.target===m) m.classList.remove("on"); }); });
+
+function askText(title, value, cb){
+  $("#mdPromptTitle").textContent = title;
+  var inp = $("#mdPromptInput"); inp.value = value||"";
+  openModal("mdPrompt");
+  setTimeout(function(){ inp.focus(); inp.select(); }, 30);
+  $("#mdPromptOk").onclick = function(){ closeModal("mdPrompt"); cb(inp.value); };
+  inp.onkeydown = function(e){ if(e.key==="Enter"){ closeModal("mdPrompt"); cb(inp.value); } };
+}
+function askConfirm(title, text, cb){
+  $("#mdConfirmTitle").textContent = title;
+  $("#mdConfirmText").textContent = text;
+  openModal("mdConfirm");
+  $("#mdConfirmOk").onclick = function(){ closeModal("mdConfirm"); cb(); };
+}
+
+/* ============================================================
+   7. ÉVÉNEMENTS
+   ============================================================ */
+/* Langue */
+$("#langFr").onclick = function(){ state.uiLang="fr"; save(); renderAll(); };
+$("#langAr").onclick = function(){ state.uiLang="ar"; save(); renderAll(); };
+
+/* Champs liés au modèle */
+$$("[data-f]").forEach(function(inp){
+  var k = inp.getAttribute("data-f");
+  var ev = (inp.tagName==="SELECT" || inp.type==="checkbox") ? "change" : "input";
+  inp.addEventListener(ev, function(){
+    var f = active(); if(!f) return;
+    f[k] = (inp.type==="checkbox") ? inp.checked : inp.value;
+    if(k==="showEtape") renderSteps();
+    touch();
+  });
+});
+
+/* Gestion des fiches */
+$("#btnNew").onclick = function(){
+  askText(T("newName"), "", function(name){
+    var f = newFiche(); f.nom = name.trim();
+    f.numero = String(state.fiches.length + 1);
+    state.fiches.unshift(f); state.activeId = f.id;
+    save(); renderAll();
+  });
+};
+$("#btnDup").onclick = function(){
+  var f = active(); if(!f) return;
+  var c = JSON.parse(JSON.stringify(f));
+  c.id = uid(); c.nom = ficheName(f)+" "+T("copySuffix"); c.createdAt = c.updatedAt = Date.now();
+  var i = state.fiches.indexOf(f);
+  state.fiches.splice(i+1, 0, c); state.activeId = c.id;
+  save(); renderAll(); toast(T("duplicate")+" ✓");
+};
+$("#btnRen").onclick = function(){
+  var f = active(); if(!f) return;
+  askText(T("renameTitle"), ficheName(f), function(v){ f.nom = v.trim(); touch(); renderList(); });
+};
+$("#btnDel").onclick = function(){
+  var f = active(); if(!f) return;
+  askConfirm(T("delTitle"), T("delText"), function(){
+    var i = state.fiches.indexOf(f);
+    state.fiches.splice(i,1);
+    state.activeId = state.fiches.length ? state.fiches[Math.min(i, state.fiches.length-1)].id : null;
+    save(); renderAll();
+  });
+};
+$("#searchBox").oninput = renderList;
+
+/* Étapes */
+$("#btnAddStep").onclick = function(){
+  var f = active(); if(!f) return;
+  f.steps.push(blankStep("")); touch(); renderSteps();
+  var box = $("#stepsEditor"); box.lastChild.scrollIntoView({ block:"nearest" });
+};
+
+/* En-tête : logo et valeurs par défaut */
+$("#btnLogo").onclick = function(){ $("#fileLogo").click(); };
+$("#fileLogo").onchange = function(){
+  var file = this.files && this.files[0]; if(!file) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var max = 420, w = img.width, h = img.height, r = Math.min(1, max/Math.max(w,h));
+      var cv = el("canvas"); cv.width = Math.round(w*r); cv.height = Math.round(h*r);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      var data = cv.toDataURL("image/png");
+      if(data.length > 260000) data = cv.toDataURL("image/jpeg", 0.85);
+      state.settings.logo = data; save(); renderDoc(); toast("✓");
+    };
+    img.onerror = function(){ toast(T("importErr")); };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(file);
+  this.value = "";
+};
+$("#btnLogoDel").onclick = function(){ state.settings.logo = ""; save(); renderDoc(); };
+$("#btnDefaults").onclick = function(){
+  var f = active(); if(!f) return;
+  var d = DEFAULTS[state.uiLang];
+  ["ministere","academie","direction","etablissement","matiere","professeur"].forEach(function(k){ f[k] = d[k]; });
+  touch(); renderForm();
+};
+$("#btnSaveDefaults").onclick = function(){
+  var f = active(); if(!f) return;
+  state.settings.defaults = {
+    ministere:f.ministere, academie:f.academie, direction:f.direction,
+    etablissement:f.etablissement, matiere:f.matiere, professeur:f.professeur
+  };
+  save(); toast(T("saved"));
+};
+
+/* Import / export JSON (sauvegarde hors-ligne) */
+$("#btnExport").onclick = function(){
+  var data = JSON.stringify({ app:"jadadat-svt", version:1, exportedAt:new Date().toISOString(),
+                              settings:state.settings, fiches:state.fiches }, null, 2);
+  var blob = new Blob([data], { type:"application/json" });
+  var url = URL.createObjectURL(blob), a = el("a");
+  a.href = url; a.download = "jadadat-svt-" + new Date().toISOString().slice(0,10) + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+};
+$("#btnImport").onclick = function(){ $("#fileImport").click(); };
+$("#fileImport").onchange = function(){
+  var file = this.files && this.files[0]; if(!file) return;
+  var rd = new FileReader();
+  rd.onload = function(){
+    try{
+      var o = JSON.parse(rd.result);
+      var arr = Array.isArray(o) ? o : (o && o.fiches);
+      if(!Array.isArray(arr)) throw 0;
+      arr.forEach(function(f){
+        var base = newFiche();
+        var m = Object.assign(base, f);
+        m.id = uid();
+        if(!Array.isArray(m.steps) || !m.steps.length) m.steps = [blankStep("")];
+        state.fiches.unshift(m);
+      });
+      if(arr.length) state.activeId = state.fiches[0].id;
+      if(o && o.settings && o.settings.logo && !state.settings.logo) state.settings.logo = o.settings.logo;
+      save(); renderAll(); toast(arr.length + " " + T("imported"));
+    }catch(e){ toast(T("importErr")); }
+  };
+  rd.readAsText(file);
+  this.value = "";
+};
+
+/* Aperçu : zoom et impression */
+$("#zIn").onclick  = function(){ autoFit=false; zoom = Math.min(1.8, zoom+0.1); fitPreview(); };
+$("#zOut").onclick = function(){ autoFit=false; zoom = Math.max(0.2, zoom-0.1); fitPreview(); };
+$("#zFit").onclick = function(){ autoFit=true; fitPreview(); };
+$("#btnPrint").onclick = function(){ renderDoc(); setTimeout(function(){ window.print(); }, 60); };
+$("#btnHelp").onclick = function(){ openModal("mdHelp"); };
+window.addEventListener("resize", function(){ if(autoFit) fitPreview(); });
+document.addEventListener("keydown", function(e){
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="s"){ e.preventDefault(); save(); toast(T("saved")); }
+});
+
+/* ============================================================
+   8. DÉMARRAGE
+   ============================================================ */
+(function init(){
+  var had = load();
+  if(!had || !state.fiches.length){
+    var f = newFiche();
+    f.nom = ""; f.unite = ""; f.titre = "";
+    state.fiches = [f]; state.activeId = f.id;
+  }
+  if(!active() && state.fiches.length) state.activeId = state.fiches[0].id;
+  renderAll();
+  save();
+})();
+</script>
+</body>
+</html>
