@@ -4,8 +4,9 @@ Application web **autonome** (un seul fichier `index.html`, aucun serveur, aucun
 internet, aucune bibliothèque externe) pour préparer et imprimer des **جذاذات / fiches de
 préparation de cours** de SVT.
 
-Contexte pré-rempli : **Pr : Omari Mohammed** — Lycée Qualifiant Tilmi — Direction Provinciale
-de Tinghir — AREF Drâa-Tafilalet.
+Application conçue par **Pr. Omari Mohammed**, professeur de Sciences de la Vie et de la Terre,
+et développée avec Claude (Anthropic). Elle est utilisable telle quelle par n'importe quel
+professeur : l'en-tête est vierge au départ et se renseigne en quelques clics.
 
 ## Utilisation
 
@@ -15,6 +16,16 @@ de Tinghir — AREF Drâa-Tafilalet.
 4. Bouton **Imprimer / PDF** → dans la fenêtre du navigateur choisir :
    *Destination* « Enregistrer au format PDF », *Format* A4, *Orientation* **Paysage**,
    *Marges* « Aucune », et cocher **« Graphiques d'arrière-plan »**.
+
+## En-tête de votre établissement
+
+- L'**académie régionale** se choisit dans une liste des **12 AREF** du Royaume ; la
+  **direction provinciale** se choisit ensuite dans la liste des directions de cette académie
+  (**82 directions** au total). L'intitulé officiel complet est inséré automatiquement, en
+  français ou en arabe selon la langue du document, et reste modifiable.
+- Renseignez une fois l'académie, la direction, l'établissement, votre nom et votre logo, puis
+  cliquez sur **« Mémoriser comme défaut »** : toutes vos prochaines fiches en hériteront.
+  Ces informations restent sur votre ordinateur.
 
 ## Assistant « programme officiel »
 
@@ -77,6 +88,8 @@ modalités d'évaluation et amorces de situations de départ.
 - Les données restent sur le poste de travail : rien n'est envoyé sur internet. Vider les
   données du navigateur efface les fiches → penser au bouton **Exporter**.
 - Pour une utilisation sur plusieurs postes, copier simplement le fichier `index.html`.
+- Aucune information personnelle n'est incluse dans le fichier : chaque professeur saisit son
+  propre en-tête, qui n'est enregistré que dans son navigateur.
 - Source du programme intégré : « Programmes des sections internationales du baccalauréat
   marocain — Option français — Discipline : Sciences de la Vie et de la Terre », Ministère de
   l'Éducation Nationale et de la Formation Professionnelle, 29-30 avril 2015. Les niveaux couverts

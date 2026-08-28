@@ -92,6 +92,9 @@ h1,h2,h3,h4{margin:0}
 #fichesList .m{font-size:11px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
 .badge{background:var(--brand-l);color:var(--brand-d);border-radius:20px;padding:0 7px;font-size:10.5px;font-weight:600}
 .empty{color:var(--muted);font-size:12.5px;text-align:center;padding:18px 6px}
+.credit{border-top:1px solid var(--line);background:#f4f8f8;padding:8px 10px;text-align:center;font-size:10.5px;color:var(--muted);line-height:1.55}
+.credit b{color:var(--brand-d);font-size:11.5px}
+.credit em{font-style:normal;opacity:.85}
 
 /* ---------- Formulaire ---------- */
 fieldset{border:1px solid var(--line);border-radius:9px;padding:10px 12px 12px;margin:0 0 12px}
@@ -192,6 +195,7 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 #paper .doc-head img{max-height:16mm;max-width:34mm;object-fit:contain}
 #paper .doc-head .kv{color:#000}
 #paper .doc-head .kv b{color:#14493d}
+#paper .doc-head .kv.line{font-weight:700;color:#14493d}
 
 /* Bandeau titre */
 #paper .doc-title{
@@ -263,7 +267,7 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
     <div class="logo-mark">🧬</div>
     <div>
       <h1 data-i18n="appTitle">Générateur de جذاذات — SVT</h1>
-      <div class="sub" data-i18n="appSub">Lycée Qualifiant Tilmi — Direction Provinciale de Tinghir</div>
+      <div class="sub" data-i18n="appSub">Fiches de préparation — Sciences de la Vie et de la Terre</div>
     </div>
   </div>
   <div class="lang-switch">
@@ -296,6 +300,12 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
       <button class="btn sm" id="btnImport" data-i18n="importJson">Importer</button>
       <input type="file" id="fileImport" accept="application/json,.json" hidden>
     </div>
+    <div class="credit">
+      <span data-i18n="creditBy">Application conçue par</span>
+      <b data-i18n="creditName">Pr. Omari Mohammed</b><br>
+      <span data-i18n="creditSubj">professeur de Sciences de la Vie et de la Terre</span><br>
+      <em data-i18n="creditWith">Développée avec Claude (Anthropic)</em>
+    </div>
   </section>
 
   <!-- ============ Colonne 2 : saisie ============ -->
@@ -308,16 +318,18 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
 
       <fieldset>
         <legend data-i18n="secHeader">En-tête officiel</legend>
-        <div class="grid g2">
-          <label class="field"><span data-i18n="fMinistry">Ministère</span>
-            <input data-f="ministere"></label>
+        <label class="field"><span data-i18n="fMinistry">Ministère</span>
+          <input data-f="ministere"></label>
+        <div class="grid g2" style="margin-top:9px">
           <label class="field"><span data-i18n="fAcademie">Académie Régionale</span>
-            <input data-f="academie"></label>
+            <select id="selAref"></select>
+            <input data-f="academie" data-ph="phAcademie"></label>
           <label class="field"><span data-i18n="fDirection">Direction Provinciale</span>
-            <input data-f="direction"></label>
-          <label class="field"><span data-i18n="fEtab">Établissement</span>
-            <input data-f="etablissement"></label>
+            <select id="selDir"></select>
+            <input data-f="direction" data-ph="phDirection"></label>
         </div>
+        <label class="field" style="margin-top:9px"><span data-i18n="fEtab">Établissement</span>
+          <input data-f="etablissement" data-ph="phEtab"></label>
         <div class="rowbtns" style="margin-top:9px">
           <button class="btn sm" id="btnLogo" data-i18n="chooseLogo">Choisir un logo…</button>
           <button class="btn sm" id="btnLogoDel" data-i18n="removeLogo">Retirer le logo</button>
@@ -373,7 +385,7 @@ label.field > *:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3p
           <label class="field"><span data-i18n="fNum">Fiche N°</span>
             <input data-f="numero"></label>
           <label class="field"><span data-i18n="fProf">Professeur</span>
-            <input data-f="professeur"></label>
+            <input data-f="professeur" data-ph="phProf"></label>
           <label class="field"><span data-i18n="fAnnee">Année scolaire</span>
             <input data-f="annee"></label>
           <label class="field"><span data-i18n="fDocLang">Langue du document</span>
@@ -491,7 +503,13 @@ var LEVELS = [
 /* Libellés de l'interface */
 var I18N = {
   fr:{
-    appTitle:"Générateur de جذاذات — SVT", appSub:"Lycée Qualifiant Tilmi — Direction Provinciale de Tinghir",
+    appTitle:"Générateur de جذاذات — SVT", appSub:"Fiches de préparation — Sciences de la Vie et de la Terre",
+    choose:"— Choisir dans la liste —", phAcademie:"Intitulé imprimé sur la fiche",
+    phDirection:"Intitulé imprimé sur la fiche", phEtab:"Ex. : Lycée Qualifiant …",
+    phProf:"Ex. : Pr : Prénom Nom",
+    creditBy:"Application conçue par", creditName:"Pr. Omari Mohammed",
+    creditSubj:"professeur de Sciences de la Vie et de la Terre",
+    creditWith:"Développée avec Claude (Anthropic)",
     printPdf:"Imprimer / PDF", myFiches:"Mes fiches", new:"Nouvelle", duplicate:"Dupliquer", rename:"Renommer",
     delete:"Supprimer", exportJson:"Exporter", importJson:"Importer", editor:"Saisie de la fiche",
     secHeader:"En-tête officiel", fMinistry:"Ministère", fAcademie:"Académie Régionale",
@@ -535,11 +553,19 @@ var I18N = {
       "Pour obtenir un PDF : bouton « Imprimer / PDF » puis, dans la fenêtre du navigateur, choisir « Enregistrer au format PDF », format A4, orientation Paysage, marges « Aucune » et cocher « Graphiques d'arrière-plan ».",
       "La pagination est calculée automatiquement : les étapes qui ne tiennent pas sont reportées sur la page suivante avec le titre des colonnes répété.",
       "L'option « Étirer les lignes » agrandit les lignes du tableau pour remplir la page et éviter les grands espaces vides.",
+      "L'académie régionale et la direction provinciale se choisissent dans des listes couvrant les 12 AREF et leurs directions ; l'intitulé imprimé reste modifiable.",
+      "Renseignez une fois votre en-tête (académie, direction, établissement, nom) puis cliquez sur « Mémoriser comme défaut » : toutes vos prochaines fiches en hériteront.",
       "Sauvegarde de secours : bouton « Exporter » (fichier .json) puis « Importer » sur un autre ordinateur.",
       "Les sections laissées vides ne sont pas imprimées."]
   },
   ar:{
-    appTitle:"مولّد الجذاذات — علوم الحياة والأرض", appSub:"الثانوية التأهيلية تلمي — المديرية الإقليمية تنغير",
+    appTitle:"مولّد الجذاذات — علوم الحياة والأرض", appSub:"جذاذات الإعداد — مادة علوم الحياة والأرض",
+    choose:"— اختر من اللائحة —", phAcademie:"الصيغة المطبوعة على الجذاذة",
+    phDirection:"الصيغة المطبوعة على الجذاذة", phEtab:"مثال: الثانوية التأهيلية …",
+    phProf:"مثال: الأستاذ(ة): الاسم الكامل",
+    creditBy:"تطبيق من إنجاز", creditName:"الأستاذ عمري محمد",
+    creditSubj:"أستاذ مادة علوم الحياة والأرض",
+    creditWith:"تم تطويره بمساعدة Claude (Anthropic)",
     printPdf:"طباعة / PDF", myFiches:"جذاذاتي", new:"جديدة", duplicate:"نسخ", rename:"إعادة التسمية",
     delete:"حذف", exportJson:"تصدير", importJson:"استيراد", editor:"تحرير الجذاذة",
     secHeader:"الترويسة الرسمية", fMinistry:"الوزارة", fAcademie:"الأكاديمية الجهوية",
@@ -583,6 +609,8 @@ var I18N = {
       "للحصول على ملف PDF: اضغط «طباعة / PDF» ثم اختر «حفظ بصيغة PDF»، القياس A4، الاتجاه أفقي، الهوامش «بدون»، مع تفعيل «رسوم الخلفية».",
       "يتم ترقيم الصفحات تلقائيًا: المراحل التي لا تسع في الصفحة تُنقل إلى الصفحة الموالية مع تكرار عناوين الأعمدة.",
       "خيار «توسيع الصفوف» يوسّع صفوف الجدول لملء الصفحة وتفادي الفراغات الكبيرة.",
+      "تُختار الأكاديمية الجهوية والمديرية الإقليمية من لوائح تشمل الأكاديميات الاثنتي عشرة ومديرياتها، مع إمكانية تعديل الصيغة المطبوعة.",
+      "املأ ترويسة مؤسستك مرة واحدة (الأكاديمية، المديرية، المؤسسة، الاسم) ثم اضغط «اعتمادها كقيم افتراضية» لتستفيد منها كل جذاذاتك اللاحقة.",
       "للنسخ الاحتياطي: زر «تصدير» (ملف .json) ثم «استيراد» في حاسوب آخر.",
       "الأقسام الفارغة لا تظهر في الطباعة."]
   }
@@ -666,15 +694,12 @@ var DOC = {
 
 var DEFAULTS = {
   fr:{ ministere:"Royaume du Maroc — Ministère de l'Éducation Nationale, du Préscolaire et des Sports",
-       academie:"Académie Régionale d'Éducation et de Formation Drâa-Tafilalet",
-       direction:"Direction Provinciale de Tinghir", etablissement:"Lycée Qualifiant Tilmi",
-       matiere:"Sciences de la Vie et de la Terre", professeur:"Pr : Omari Mohammed" },
+       academie:"", direction:"", etablissement:"",
+       matiere:"Sciences de la Vie et de la Terre", professeur:"" },
   ar:{ ministere:"المملكة المغربية — وزارة التربية الوطنية والتعليم الأولي والرياضة",
-       academie:"الأكاديمية الجهوية للتربية والتكوين لجهة درعة تافيلالت",
-       direction:"المديرية الإقليمية تنغير", etablissement:"الثانوية التأهيلية تلمي",
-       matiere:"علوم الحياة والأرض", professeur:"الأستاذ: عمري محمد" }
+       academie:"", direction:"", etablissement:"",
+       matiere:"علوم الحياة والأرض", professeur:"" }
 };
-
 
 /* ============================================================
    1 bis. PROGRAMME OFFICIEL DE SVT
@@ -999,6 +1024,80 @@ var CURRICULUM = {
 
 };
 
+
+/* ============================================================
+   1 quater. ACADÉMIES RÉGIONALES ET DIRECTIONS PROVINCIALES
+   (découpage régional du Maroc — 12 AREF)
+   ============================================================ */
+var ACADEMIES = [
+ { fr:"Tanger-Tétouan-Al Hoceïma", ar:"طنجة تطوان الحسيمة", d:[
+   {fr:"Tanger-Assilah",ar:"طنجة أصيلة"},{fr:"M'diq-Fnideq",ar:"المضيق الفنيدق"},
+   {fr:"Tétouan",ar:"تطوان"},{fr:"Fahs-Anjra",ar:"الفحص أنجرة"},
+   {fr:"Larache",ar:"العرائش"},{fr:"Al Hoceïma",ar:"الحسيمة"},
+   {fr:"Chefchaouen",ar:"شفشاون"},{fr:"Ouezzane",ar:"وزان"}]},
+ { fr:"L'Oriental", x:"de l'Oriental", ar:"الشرق", d:[
+   {fr:"Oujda-Angad",ar:"وجدة أنكاد"},{fr:"Nador",ar:"الناظور"},
+   {fr:"Driouch",ar:"الدريوش"},{fr:"Jerada",ar:"جرادة"},
+   {fr:"Berkane",ar:"بركان"},{fr:"Taourirt",ar:"تاوريرت"},
+   {fr:"Guercif",ar:"جرسيف"},{fr:"Figuig",ar:"فكيك"}]},
+ { fr:"Fès-Meknès", ar:"فاس مكناس", d:[
+   {fr:"Fès",ar:"فاس"},{fr:"Meknès",ar:"مكناس"},
+   {fr:"El Hajeb",ar:"الحاجب"},{fr:"Ifrane",ar:"إفران"},
+   {fr:"Moulay Yacoub",ar:"مولاي يعقوب"},{fr:"Sefrou",ar:"صفرو"},
+   {fr:"Boulemane",ar:"بولمان"},{fr:"Taounate",ar:"تاونات"},{fr:"Taza",ar:"تازة"}]},
+ { fr:"Rabat-Salé-Kénitra", ar:"الرباط سلا القنيطرة", d:[
+   {fr:"Rabat",ar:"الرباط"},{fr:"Salé",ar:"سلا"},
+   {fr:"Skhirate-Témara",ar:"الصخيرات تمارة"},{fr:"Kénitra",ar:"القنيطرة"},
+   {fr:"Khémisset",ar:"الخميسات"},{fr:"Sidi Kacem",ar:"سيدي قاسم"},
+   {fr:"Sidi Slimane",ar:"سيدي سليمان"}]},
+ { fr:"Béni Mellal-Khénifra", ar:"بني ملال خنيفرة", d:[
+   {fr:"Béni Mellal",ar:"بني ملال"},{fr:"Azilal",ar:"أزيلال"},
+   {fr:"Fquih Ben Salah",ar:"الفقيه بن صالح"},{fr:"Khénifra",ar:"خنيفرة"},
+   {fr:"Khouribga",ar:"خريبكة"}]},
+ { fr:"Casablanca-Settat", ar:"الدار البيضاء سطات", d:[
+   {fr:"Casablanca-Anfa",ar:"الدار البيضاء أنفا"},{fr:"Al Fida-Mers Sultan",ar:"الفداء مرس السلطان"},
+   {fr:"Aïn Chock",ar:"عين الشق"},{fr:"Aïn Sebaâ-Hay Mohammadi",ar:"عين السبع الحي المحمدي"},
+   {fr:"Ben M'Sick",ar:"بن مسيك"},{fr:"Moulay Rachid",ar:"مولاي رشيد"},
+   {fr:"Sidi Bernoussi",ar:"سيدي البرنوصي"},{fr:"Hay Hassani",ar:"الحي الحسني"},
+   {fr:"Mohammadia",ar:"المحمدية"},{fr:"Médiouna",ar:"مديونة"},
+   {fr:"Nouaceur",ar:"النواصر"},{fr:"El Jadida",ar:"الجديدة"},
+   {fr:"Sidi Bennour",ar:"سيدي بنور"},{fr:"Settat",ar:"سطات"},
+   {fr:"Berrechid",ar:"برشيد"},{fr:"Benslimane",ar:"بنسليمان"}]},
+ { fr:"Marrakech-Safi", ar:"مراكش آسفي", d:[
+   {fr:"Marrakech",ar:"مراكش"},{fr:"Chichaoua",ar:"شيشاوة"},
+   {fr:"Al Haouz",ar:"الحوز"},{fr:"El Kelâa des Sraghna",ar:"قلعة السراغنة"},
+   {fr:"Essaouira",ar:"الصويرة"},{fr:"Rehamna",ar:"الرحامنة"},
+   {fr:"Safi",ar:"آسفي"},{fr:"Youssoufia",ar:"اليوسفية"}]},
+ { fr:"Drâa-Tafilalet", ar:"درعة تافيلالت", d:[
+   {fr:"Errachidia",ar:"الرشيدية"},{fr:"Ouarzazate",ar:"ورزازات"},
+   {fr:"Midelt",ar:"ميدلت"},{fr:"Tinghir",ar:"تنغير"},{fr:"Zagora",ar:"زاكورة"}]},
+ { fr:"Souss-Massa", ar:"سوس ماسة", d:[
+   {fr:"Agadir Ida-Outanane",ar:"أكادير إداوتنان"},{fr:"Inezgane-Aït Melloul",ar:"إنزكان أيت ملول"},
+   {fr:"Chtouka-Aït Baha",ar:"اشتوكة آيت باها"},{fr:"Taroudant",ar:"تارودانت"},
+   {fr:"Tiznit",ar:"تيزنيت"},{fr:"Tata",ar:"طاطا"}]},
+ { fr:"Guelmim-Oued Noun", ar:"كلميم واد نون", d:[
+   {fr:"Guelmim",ar:"كلميم"},{fr:"Assa-Zag",ar:"أسا الزاك"},
+   {fr:"Tan-Tan",ar:"طانطان"},{fr:"Sidi Ifni",ar:"سيدي إفني"}]},
+ { fr:"Laâyoune-Sakia El Hamra", ar:"العيون الساقية الحمراء", d:[
+   {fr:"Laâyoune",ar:"العيون"},{fr:"Boujdour",ar:"بوجدور"},
+   {fr:"Tarfaya",ar:"طرفاية"},{fr:"Es-Semara",ar:"السمارة"}]},
+ { fr:"Dakhla-Oued Ed-Dahab", ar:"الداخلة وادي الذهب", d:[
+   {fr:"Oued Ed-Dahab",ar:"وادي الذهب"},{fr:"Aousserd",ar:"أوسرد"}]}
+];
+
+/* Intitulés officiels complets, dans la langue du document */
+function arefLabel(i, L){
+  var a = ACADEMIES[i]; if(!a) return "";
+  return (L==="ar") ? "الأكاديمية الجهوية للتربية والتكوين لجهة " + a.ar
+                    : "Académie Régionale d'Éducation et de Formation " + (a.x || a.fr);
+}
+function dirLabel(i, j, L){
+  var a = ACADEMIES[i]; if(!a || !a.d[j]) return "";
+  var n = a.d[j][L==="ar" ? "ar" : "fr"];
+  if(L==="ar") return "المديرية الإقليمية ب" + n;
+  return "Direction Provinciale " + (/^[AEIOUYÉÈaeiouyéè]/.test(n) ? "d'" : "de ") + n;
+}
+
 /* ============================================================
    1 ter. BANQUES DE FORMULATIONS (listes de choix)
    ============================================================ */
@@ -1131,7 +1230,8 @@ function newFiche(){
   return {
     id:uid(), nom:"", createdAt:Date.now(), updatedAt:Date.now(),
     ministere:d.ministere||"", academie:d.academie||"", direction:d.direction||"",
-    etablissement:d.etablissement||"", niveau:"TCS", niveauLibre:"",
+    etablissement:d.etablissement||"", aref:(d.aref==null?-1:d.aref), dirIdx:(d.dirIdx==null?-1:d.dirIdx),
+    niveau:"TCS", niveauLibre:"",
     matiere:d.matiere||"", unite:"", titre:"", duree:"", numero:"1",
     professeur:d.professeur||"", annee:schoolYear(), docLang:"auto",
     competences:"", prerequis:"", situation:"",
@@ -1222,6 +1322,7 @@ function renderForm(){
     else inp.value = (f[k]==null?"":f[k]);
   });
   renderSteps();
+  refreshAref();
   refreshProg();
   $("#btnDup").disabled = $("#btnRen").disabled = $("#btnDel").disabled = !f;
 }
@@ -1280,6 +1381,37 @@ function moveStep(i,d){
   touch(); renderSteps();
 }
 
+
+/* ---------- Académie régionale et direction provinciale ---------- */
+function refreshAref(){
+  var f = active(), L = state.uiLang, sa = $("#selAref"), sd = $("#selDir");
+  sa.innerHTML = ""; sd.innerHTML = "";
+  sa.disabled = sd.disabled = !f;
+  var o0 = el("option", null, T("choose")); o0.value = "-1"; sa.appendChild(o0);
+  ACADEMIES.forEach(function(a,i){ var o = el("option", null, a[L]); o.value = i; sa.appendChild(o); });
+  if(!f) return;
+  sa.value = String(f.aref == null ? -1 : f.aref);
+  var d0 = el("option", null, T("choose")); d0.value = "-1"; sd.appendChild(d0);
+  var a = ACADEMIES[f.aref];
+  if(a) a.d.forEach(function(x,j){ var o = el("option", null, x[L]); o.value = j; sd.appendChild(o); });
+  else sd.disabled = true;
+  sd.value = String(f.dirIdx == null ? -1 : f.dirIdx);
+  if(sd.selectedIndex < 0) sd.value = "-1";
+}
+function pickAref(i){
+  var f = active(); if(!f) return;
+  f.aref = i; f.dirIdx = -1;
+  var L = docLangOf(f);
+  if(i >= 0) f.academie = arefLabel(i, L);
+  f.direction = "";
+  touch(); renderForm();
+}
+function pickDir(j){
+  var f = active(); if(!f) return;
+  f.dirIdx = j;
+  if(j >= 0 && f.aref >= 0) f.direction = dirLabel(f.aref, j, docLangOf(f));
+  touch(); renderForm();
+}
 
 /* ============================================================
    4 bis. ASSISTANT « PROGRAMME OFFICIEL » ET BANQUES
@@ -1440,9 +1572,9 @@ function makeHead(f, L, compact){
   var D = DOC[L];
   var h = el("div","doc-head");
   var c1 = el("div","col");
-  kv(c1, D.academieS, f.academie);
-  kv(c1, D.directionS, f.direction);
-  kv(c1, D.etabS, f.etablissement);
+  [f.academie, f.direction, f.etablissement].forEach(function(v){
+    if(hasText(v)) c1.appendChild(el("div","kv line", v));
+  });
   var c2 = el("div","col mid");
   if(hasText(f.ministere)) c2.appendChild(el("div","ministry", f.ministere));
   if(state.settings.logo && !compact){
@@ -1706,9 +1838,18 @@ $$("[data-f]").forEach(function(inp){
     f[k] = (inp.type==="checkbox") ? inp.checked : inp.value;
     if(k==="showEtape") renderSteps();
     if(k==="niveau"){ progSel = { u:"0", l:"all" }; refreshProg(); }
+    if(k==="docLang" && f.aref >= 0){          /* réécrit les intitulés dans la langue du document */
+      f.academie = arefLabel(f.aref, docLangOf(f));
+      if(f.dirIdx >= 0) f.direction = dirLabel(f.aref, f.dirIdx, docLangOf(f));
+      renderForm();
+    }
     touch();
   });
 });
+
+/* Académie régionale et direction provinciale */
+$("#selAref").onchange = function(){ pickAref(+this.value); };
+$("#selDir").onchange  = function(){ pickDir(+this.value); };
 
 /* Assistant « programme officiel » */
 $("#progUnite").onchange = function(){ progSel.u = this.value; progSel.l = "all"; refreshLecons(); };
@@ -1778,15 +1919,19 @@ $("#fileLogo").onchange = function(){
 $("#btnLogoDel").onclick = function(){ state.settings.logo = ""; save(); renderDoc(); };
 $("#btnDefaults").onclick = function(){
   var f = active(); if(!f) return;
-  var d = DEFAULTS[state.uiLang];
-  ["ministere","academie","direction","etablissement","matiere","professeur"].forEach(function(k){ f[k] = d[k]; });
+  var d = state.settings.defaults || DEFAULTS[state.uiLang];
+  ["ministere","academie","direction","etablissement","matiere","professeur"].forEach(function(k){
+    if(hasText(d[k])) f[k] = d[k];
+  });
+  if(d.aref != null){ f.aref = d.aref; f.dirIdx = (d.dirIdx == null ? -1 : d.dirIdx); }
   touch(); renderForm();
 };
 $("#btnSaveDefaults").onclick = function(){
   var f = active(); if(!f) return;
   state.settings.defaults = {
     ministere:f.ministere, academie:f.academie, direction:f.direction,
-    etablissement:f.etablissement, matiere:f.matiere, professeur:f.professeur
+    etablissement:f.etablissement, matiere:f.matiere, professeur:f.professeur,
+    aref:f.aref, dirIdx:f.dirIdx
   };
   save(); toast(T("saved"));
 };
