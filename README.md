@@ -135,6 +135,15 @@ modalités d'évaluation et amorces de situations de départ.
   répétition des en-têtes de colonnes ; option de répétition de l'en-tête officiel.
 - **Remplissage de la page** : les lignes (ou les rubriques) sont étirées pour occuper toute la
   hauteur utile — pas de grands espaces vides en bas de page.
+- **Trois modèles de fiche**, choisis dans le bloc « Mise en page » et mémorisables comme
+  préférence par défaut :
+
+| Modèle | Format | Style |
+|---|---|---|
+| **Classique** | A4 paysage | En-têtes gris, bandes « contenu de la section » |
+| **Vert** | A4 **portrait** | Bandeaux verts, titre souligné, colonne « Évaluation + Durée » |
+| **Sobre** | A4 paysage | Noir et blanc, sans aplat — économique à la photocopie |
+
 - **Mise en page réglable** : en-tête officiel avec logo (optionnel), pied de page à
   3 colonnes *Niveau / Année scolaire / Pr : …* avec numérotation **« Page X / Y »**, et
   ligne de clôture en fin de fiche — chacun activable ou non.
