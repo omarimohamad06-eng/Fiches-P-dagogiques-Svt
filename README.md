@@ -9,6 +9,12 @@ et développée avec Claude (Anthropic). Son monogramme sert de logo dans l'en-t
 d'onglet (tracé vectoriel intégré, sans fichier externe). Elle est utilisable telle quelle par n'importe quel
 professeur : l'en-tête est vierge au départ et se renseigne en quelques clics.
 
+## Guide pour les collègues
+
+Un guide illustré de 11 pages (PDF, A4) explique pas à pas l'utilisation de l'application :
+**[Guide_utilisation.pdf](Guide_utilisation.pdf)** — également accessible en ligne à l'adresse
+`omarimohamad06-eng.github.io/Fiches-P-dagogiques-Svt/Guide_utilisation.pdf`.
+
 ## Accès par code
 
 L'application s'ouvre sur un écran demandant un **nom d'utilisateur** et un **code d'accès**.
