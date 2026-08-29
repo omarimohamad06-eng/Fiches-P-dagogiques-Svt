@@ -11,9 +11,16 @@ professeur : l'en-tête est vierge au départ et se renseigne en quelques clics.
 
 ## Guide pour les collègues
 
-Un guide illustré de 11 pages (PDF, A4) explique pas à pas l'utilisation de l'application :
-**[Guide_utilisation.pdf](Guide_utilisation.pdf)** — également accessible en ligne à l'adresse
-`omarimohamad06-eng.github.io/Fiches-P-dagogiques-Svt/Guide_utilisation.pdf`.
+Un guide illustré de 11 pages (PDF, A4) explique pas à pas l'utilisation de l'application,
+en deux versions :
+
+| Version | Fichier | Lien direct |
+|---|---|---|
+| Français | [Guide_utilisation.pdf](Guide_utilisation.pdf) | `…github.io/Fiches-P-dagogiques-Svt/Guide_utilisation.pdf` |
+| العربية | [Guide_utilisation_AR.pdf](Guide_utilisation_AR.pdf) | `…github.io/Fiches-P-dagogiques-Svt/Guide_utilisation_AR.pdf` |
+
+Les captures d'écran des deux guides utilisent un nom d'établissement neutre
+(« Lycée Qualifiant (votre établissement) »).
 
 ## Accès par code
 
