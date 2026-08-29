@@ -20,7 +20,9 @@ en deux versions :
 | العربية | [Guide_utilisation_AR.pdf](Guide_utilisation_AR.pdf) | `…github.io/Fiches-P-dagogiques-Svt/Guide_utilisation_AR.pdf` |
 
 Les captures d'écran des deux guides utilisent un nom d'établissement neutre
-(« Lycée Qualifiant (votre établissement) »).
+(« Lycée Qualifiant (votre établissement) »). Dans la version française, l'adresse de
+l'application est masquée (texte de remplacement + flou) : elle est communiquée directement
+aux collègues.
 
 ## Accès par code
 
